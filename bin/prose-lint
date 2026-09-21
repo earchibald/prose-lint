@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+// prose-lint [--no-jev] [--json] [--min 0.7] [file ...]   With no file, it reads stdin.
+// Exit 0: clean. Exit 1: findings. Exit 2: it could not run.
+const fs = require('fs'); const path = require('path'); const os = require('os');
+const { lint } = require('../lib/lint');
+
+function keyFromFiles() { // The environment first, then the user's config file, then a .env beside the work.
+  if (process.env.TYPESAFE_API_KEY) return process.env.TYPESAFE_API_KEY;
+  for (const f of [path.join(os.homedir(), '.config', 'prose-lint', 'env'), path.join(process.cwd(), '.env')]) {
+    try { const m = fs.readFileSync(f, 'utf8').match(/^TYPESAFE_API_KEY=(.*)$/m); if (m) return m[1].trim().replace(/^["']|["']$/g, ''); } catch {}
+  }
+  return '';
+}
+
+(async () => {
+  const args = process.argv.slice(2); const files = []; let jev = true, json = false, min, rulesFile = path.join(__dirname, '..', 'rules.json');
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--no-jev') jev = false; else if (args[i] === '--json') json = true;
+    else if (args[i] === '--min') min = Number(args[++i]); else if (args[i] === '--rules') rulesFile = args[++i];
+    else if (args[i].startsWith('--')) { console.error('unknown option ' + args[i]); process.exit(2); } else files.push(args[i]);
+  }
+  const rules = JSON.parse(fs.readFileSync(rulesFile, 'utf8'));
+  const cacheFile = path.join(os.homedir(), '.cache', 'prose-lint', 'jev.json');
+  const inputs = files.length ? files.map(f => [f, fs.readFileSync(f, 'utf8')]) : [['<stdin>', fs.readFileSync(0, 'utf8')]];
+  const out = { jev: jev ? 'ran' : 'off', tokens: 0, files: [] }; const key = jev ? keyFromFiles() : '';
+  for (const [file, text] of inputs) {
+    const r = await lint(text, { rules, jev, key, cacheFile, min });
+    if (r.jev !== 'ran') out.jev = r.jev; out.tokens += r.tokens; out.files.push({ file, findings: r.findings });
+  }
+  const total = out.files.reduce((n, f) => n + f.findings.length, 0);
+  if (json) console.log(JSON.stringify(out));
+  else {
+    for (const f of out.files) for (const x of f.findings) {
+      const head = x.kind === 'judge' ? `${x.rule} ${x.score.toFixed(2)}` : x.kind === 'hint' ? `${x.rule} (hint)` : x.rule;
+      console.log(`${f.file}:${x.line}  ${head}${x.match && x.kind !== 'judge' ? '  "' + x.match + '"' : ''}${x.note ? '  ' + x.note : ''}`);
+      console.log('    ' + (x.kind === 'judge' && x.match !== x.sentence ? '… ' + x.match : x.sentence).slice(0, 220));
+    }
+    console.log(`${total} finding${total === 1 ? '' : 's'}. judge: ${out.jev}${out.tokens ? `, ${out.tokens} tokens, $${(out.tokens * 42e-9).toFixed(5)}` : ''}`);
+  }
+  process.exit(total ? 1 : 0);
+})().catch(e => { console.error('prose-lint: ' + (e.message || e)); process.exit(2); });
