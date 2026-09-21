@@ -12,11 +12,11 @@
 ## Install as a Claude Code plugin
 
 ```
-claude plugin marketplace add ~/Workshop/001-prose-lint
-claude plugin install prose-lint@earchibald-tools --config api_key=YOUR_TYPESAFE_KEY
+claude plugin marketplace add earchibald/claude-marketplace
+claude plugin install prose-lint@earchibald-plugins --config api_key=YOUR_TYPESAFE_KEY
 ```
 
-Claude Code keeps the key in the system keychain. The plugin brings the hooks, the style file, a small server, and five skills: `check`, `rules`, `report`, `setup`, and `plain-prose`. Run `/plugin configure prose-lint@earchibald-tools` to change an option.
+Claude Code keeps the key in the system keychain. The plugin brings the hooks, the style file, a small server, and five skills: `check`, `rules`, `report`, `setup`, and `plain-prose`. Run `/plugin configure prose-lint@earchibald-plugins` to change an option.
 
 Your own rules go in `~/.claude/prose-lint/rules.local.json`. An update replaces the plugin folder, and it leaves that file alone. Ask Claude to "ban the phrase ..." and the `rules` skill tests the rule and saves it there.
 

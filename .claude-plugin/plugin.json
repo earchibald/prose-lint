@@ -1,10 +1,12 @@
 {
   "name": "prose-lint",
   "displayName": "Prose Lint",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Marks the sentences in Claude's writing that sound like a machine wrote them, and tells Claude to write them again in plain words. It checks chat replies, prose files, commit messages, and pull requests.",
   "author": { "name": "Eugene Archibald" },
   "license": "MIT",
+  "repository": "https://github.com/earchibald/prose-lint",
+  "homepage": "https://github.com/earchibald/prose-lint",
   "keywords": ["writing", "style", "plain-english", "lint", "hooks"],
   "userConfig": {
     "api_key": {

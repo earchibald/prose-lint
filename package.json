@@ -1,6 +1,6 @@
 {
   "name": "prose-lint",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "Finds assistant mannerisms in prose: exact phrases, counted rules, and Jev pattern questions.",
   "bin": { "prose-lint": "bin/prose-lint", "prose-lint-log": "bin/prose-lint-log" },
