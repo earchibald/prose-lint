@@ -10,7 +10,7 @@ Prose Lint is a Claude Code plugin. It marks the sentences in Claude's writing t
 
 ## User guide
 
-The [Prose Lint User Guide](docs/guide.md) covers everything in this file. It also covers the skills, the rules, the command line, the design, and the measurements.
+The [Prose Lint User Guide](https://earchibald.github.io/prose-lint/) covers everything in this file. It also covers the skills, the rules, the command line, the design, and the measurements. Its source is [`docs/index.html`](docs/index.html).
 
 ## Installation
 
