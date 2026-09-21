@@ -4,7 +4,7 @@
       "command": "node",
       "args": ["${CLAUDE_PLUGIN_ROOT}/server/mcp.js"],
       "env": {
-        "CLAUDE_PLUGIN_OPTION_API_KEY": "${CLAUDE_PLUGIN_OPTION_API_KEY}",
+        "CLAUDE_PLUGIN_OPTION_API_KEY": "${user_config.api_key}",
         "CLAUDE_PLUGIN_OPTION_MESSAGE_FORMAT": "${user_config.message_format}",
         "CLAUDE_PLUGIN_OPTION_WRITE_FEEDBACK": "${user_config.write_feedback}",
         "CLAUDE_PLUGIN_OPTION_COMMIT_CHECK": "${user_config.commit_check}",

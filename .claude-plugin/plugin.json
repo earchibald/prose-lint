@@ -1,7 +1,7 @@
 {
   "name": "prose-lint",
   "displayName": "Prose Lint",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Marks the sentences in Claude's writing that sound like a machine wrote them, and tells Claude to write them again in plain words. It checks chat replies, prose files, commit messages, and pull requests.",
   "author": { "name": "Eugene Archibald" },
   "license": "MIT",

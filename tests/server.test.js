@@ -71,3 +71,17 @@ test('an unknown tool or method gets an error reply, and the server stays up', a
   const r = await talk([init, call(2, 'nope', {}), { id: 3, method: 'bogus/method' }, { id: 4, method: 'tools/list' }]);
   assert.equal(r[2].result.isError, true); assert.equal(r[3].error.code, -32601); assert.equal(r[4].result.tools.length, 4);
 });
+
+test('status does not take an unfilled placeholder for a key', async () => {
+  const home = tmpdir(); fs.mkdirSync(path.join(home, '.config/prose-lint'), { recursive: true }); fs.writeFileSync(path.join(home, '.config/prose-lint/env'), 'TYPESAFE_API_KEY=from-file\n');
+  const ph = { PROSE_LINT_NO_JEV: '', CLAUDE_PLUGIN_OPTION_API_KEY: '${CLAUDE_PLUGIN_OPTION_API_KEY}' };
+  const withFile = await talk([init, call(2, 'status', {})], { ...ph, HOME: home, PROSE_LINT_HOME: home });
+  assert.equal(JSON.parse(textOf(withFile[2])).key, 'set, from ~/.config/prose-lint/env');
+  const bare = tmpdir(); const none = await talk([init, call(2, 'status', {})], { ...ph, HOME: bare, PROSE_LINT_HOME: bare });
+  assert.equal(JSON.parse(textOf(none[2])).key, 'not set: the judge will not run');
+});
+
+test('the server config asks for the secret in the form that Claude Code fills in', () => {
+  const env = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '.mcp.json'), 'utf8')).mcpServers['prose-lint'].env;
+  assert.equal(env.CLAUDE_PLUGIN_OPTION_API_KEY, '${user_config.api_key}', 'the ${CLAUDE_PLUGIN_OPTION_...} form is left unfilled in a server config, measured on 2026-09-21 with Claude Code 2.1.278');
+});

@@ -46,10 +46,10 @@ const RUN = {
     return { ...out, ok: out.should_match.every(x => x.matched) && out.should_not_match.every(x => !x.matched) };
   },
   async status() {
-    const ctx = context(); const e = process.env; const last = f => { const r = rowsOf(f); return r.length ? r[r.length - 1].ts : 'never'; };
+    const ctx = context(); const last = f => { const r = rowsOf(f); return r.length ? r[r.length - 1].ts : 'never'; };
     const own = path.join(ctx.cfg.home, 'rules.local.json');
     return { version: VERSION,
-      key: !ctx.cfg.key ? 'not set: the judge will not run' : e.CLAUDE_PLUGIN_OPTION_API_KEY ? 'set, from the plugin option' : e.TYPESAFE_API_KEY ? 'set, from TYPESAFE_API_KEY' : 'set, from ~/.config/prose-lint/env',
+      key: { none: 'not set: the judge will not run', option: 'set, from the plugin option', env: 'set, from TYPESAFE_API_KEY', file: 'set, from ~/.config/prose-lint/env' }[ctx.cfg.key ? ctx.cfg.keyFrom : 'none'],
       options: { message_format: ctx.cfg.format, write_feedback: ctx.cfg.writeFeedback, commit_check: ctx.cfg.commitCheck, reply_log: ctx.cfg.replyLog, session_report: ctx.cfg.sessionReport },
       folders: { logs_and_your_rules: ctx.cfg.home, saved_judge_answers: ctx.cfg.cache, plugin: path.join(__dirname, '..') },
       rules: { phrases: ctx.rules.phrases.length, questions: Object.keys(ctx.rules.questions), sentence_words: ctx.rules.limits.sentenceWords, ignore: ctx.rules.hook.ignore, your_own_file: own, your_own_file_exists: fs.existsSync(own), your_own_file_error: ctx.rules.localError || null },
