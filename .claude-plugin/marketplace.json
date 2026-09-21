@@ -1,0 +1,16 @@
+{
+  "name": "earchibald-tools",
+  "owner": {
+    "name": "Eugene Archibald"
+  },
+  "metadata": {
+    "description": "Eugene Archibald's tools for Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "prose-lint",
+      "source": "./",
+      "description": "Marks machine-sounding sentences in Claude's writing and tells Claude to write them again in plain words."
+    }
+  ]
+}

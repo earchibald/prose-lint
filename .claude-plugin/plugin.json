@@ -1,0 +1,35 @@
+{
+  "name": "prose-lint",
+  "displayName": "Prose Lint",
+  "version": "0.2.0",
+  "description": "Marks the sentences in Claude's writing that sound like a machine wrote them, and tells Claude to write them again in plain words. It checks chat replies, prose files, commit messages, and pull requests.",
+  "author": { "name": "Eugene Archibald" },
+  "license": "MIT",
+  "keywords": ["writing", "style", "plain-english", "lint", "hooks"],
+  "userConfig": {
+    "api_key": {
+      "type": "string", "title": "TypeSafe key for the judge", "sensitive": true, "required": false,
+      "description": "The key for Jev, the judge model from TypeSafe. It is kept in the system keychain. Without it, the plugin still checks banned phrases, em dashes, and long sentences."
+    },
+    "message_format": {
+      "type": "string", "title": "Message form", "options": ["short", "long"], "default": "short",
+      "description": "short: one line for each finding, with a two-letter code. long: a full sentence of instruction with each finding."
+    },
+    "write_feedback": {
+      "type": "boolean", "title": "Check prose files as Claude writes them", "default": true,
+      "description": "After Claude writes or edits a .md, .mdx, .txt, or .rst file, send it the findings for the new text."
+    },
+    "commit_check": {
+      "type": "string", "title": "Commit messages and pull requests", "options": ["deny-once", "off"], "default": "deny-once",
+      "description": "deny-once: stop a commit or a gh command once when its text has a finding. The same text a second time is passed."
+    },
+    "reply_log": {
+      "type": "boolean", "title": "Record chat replies", "default": true,
+      "description": "Record the findings of each chat reply in a log. Nothing is sent to the session."
+    },
+    "session_report": {
+      "type": "boolean", "title": "Report at the start of a session", "default": true,
+      "description": "At the start of a session, give Claude four lines about its recent replies in the same project."
+    }
+  }
+}

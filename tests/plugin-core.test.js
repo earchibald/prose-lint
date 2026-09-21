@@ -79,3 +79,8 @@ test('a commit message in the short form says that the command did not run and h
   const t = formatFindings(F.slice(0, 1), { rules: r, format: 'short', subject: 'commit message', kind: 'commit' });
   assert.match(t, /did not run/); assert.match(t, /same text again/);
 });
+
+test('an option that Claude Code left as an unfilled placeholder counts as not set', () => {
+  const c = config({ HOME: tmpdir(), CLAUDE_PLUGIN_OPTION_API_KEY: '${CLAUDE_PLUGIN_OPTION_API_KEY}', CLAUDE_PLUGIN_OPTION_MESSAGE_FORMAT: '${user_config.message_format}', CLAUDE_PLUGIN_OPTION_WRITE_FEEDBACK: '${user_config.write_feedback}' });
+  assert.deepEqual([c.key, c.format, c.writeFeedback], ['', 'short', true]);
+});
