@@ -27,6 +27,24 @@
     },
     "maxFindings": 12
   },
+  "codes": {
+    "phrase": [
+      "PH",
+      "banned phrase: use the plain word"
+    ],
+    "em-dash": [
+      "ED",
+      "em dash: use a full stop or a comma"
+    ],
+    "long-sentence": [
+      "LS",
+      "over the word limit: make two sentences"
+    ],
+    "triplet": [
+      "TR",
+      "three items for rhythm: keep the one that is a fact"
+    ]
+  },
   "phrases": [
     {
       "re": "load[- ]bearing",
@@ -177,6 +195,8 @@
   ],
   "questions": {
     "thing_acts": {
+      "code": "TP",
+      "legend": "thing as person: say what it is or has",
       "fix": "say what the thing is or has, or make a person the subject",
       "version": 1,
       "min": 0.7,
@@ -189,6 +209,8 @@
       }
     },
     "x_is_a_y": {
+      "code": "DF",
+      "legend": "saying as definition: state the fact about the named thing",
       "fix": "state the fact about the named thing; keep the shape only for a real definition",
       "version": 1,
       "min": 0.7,
@@ -201,6 +223,8 @@
       }
     },
     "aphorism": {
+      "code": "SA",
+      "legend": "saying: state the fact in this case",
       "fix": "replace the general truth with the fact in this case",
       "version": 1,
       "min": 0.8,
@@ -212,6 +236,8 @@
       }
     },
     "perform_candour": {
+      "code": "HO",
+      "legend": "claim of honesty: cut it",
       "fix": "cut the claim of honesty and give the content",
       "version": 1,
       "min": 0.8,
@@ -223,6 +249,8 @@
       }
     },
     "meta_announce": {
+      "code": "AN",
+      "legend": "announcement: start with the content",
       "fix": "cut the announcement and start with the content",
       "version": 2,
       "min": 0.85,
@@ -234,6 +262,8 @@
       }
     },
     "colon_reveal": {
+      "code": "RV",
+      "legend": "staged reveal: one plain sentence",
       "fix": "write one plain sentence with no staged pause",
       "version": 1,
       "min": 0.8,
@@ -245,6 +275,8 @@
       }
     },
     "affirmation": {
+      "code": "CO",
+      "legend": "compliment: start with the first fact",
       "fix": "cut it and start with the first fact",
       "version": 1,
       "min": 0.8,

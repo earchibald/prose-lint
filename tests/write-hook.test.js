@@ -7,7 +7,7 @@ const tmpdir = () => fs.mkdtempSync(path.join(os.tmpdir(), 'pl-'));
 // Offline, with the log moved, so a test never touches the service or the user's own log.
 function run(input, dir = tmpdir()) {
   const log = path.join(dir, 'writes.jsonl');
-  const r = spawnSync(process.execPath, [HOOK], { input: typeof input === 'string' ? input : JSON.stringify(input), encoding: 'utf8', env: { ...process.env, PROSE_LINT_WRITE_LOG: log, PROSE_LINT_NO_JEV: '1', TYPESAFE_API_KEY: '' } });
+  const r = spawnSync(process.execPath, [HOOK], { input: typeof input === 'string' ? input : JSON.stringify(input), encoding: 'utf8', env: { ...process.env, PROSE_LINT_WRITE_LOG: log, PROSE_LINT_NO_JEV: '1', TYPESAFE_API_KEY: '', CLAUDE_PLUGIN_OPTION_MESSAGE_FORMAT: 'long' } });
   const rows = fs.existsSync(log) ? fs.readFileSync(log, 'utf8').trim().split('\n').map(l => JSON.parse(l)) : [];
   const ctx = r.stdout ? JSON.parse(r.stdout).hookSpecificOutput : null;
   return { r, rows, ctx };

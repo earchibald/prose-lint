@@ -6,7 +6,7 @@ const HOOK = path.join(__dirname, '..', 'hooks', 'commit-check.js');
 const tmpdir = () => fs.mkdtempSync(path.join(os.tmpdir(), 'pl-'));
 // Offline, with the log and the state moved, so a test never touches the service or the user's files.
 function run(command, dir) {
-  const env = { ...process.env, PROSE_LINT_COMMIT_LOG: path.join(dir, 'commits.jsonl'), PROSE_LINT_STATE: path.join(dir, 'acks.json'), PROSE_LINT_NO_JEV: '1', TYPESAFE_API_KEY: '' };
+  const env = { ...process.env, PROSE_LINT_COMMIT_LOG: path.join(dir, 'commits.jsonl'), PROSE_LINT_STATE: path.join(dir, 'acks.json'), PROSE_LINT_NO_JEV: '1', TYPESAFE_API_KEY: '', CLAUDE_PLUGIN_OPTION_MESSAGE_FORMAT: 'long' };
   const input = typeof command === 'string' && command.startsWith('{') ? command : JSON.stringify({ hook_event_name: 'PreToolUse', tool_name: 'Bash', session_id: 's', cwd: dir, tool_input: { command } });
   const r = spawnSync(process.execPath, [HOOK], { input, encoding: 'utf8', env });
   const log = env.PROSE_LINT_COMMIT_LOG; const rows = fs.existsSync(log) ? fs.readFileSync(log, 'utf8').trim().split('\n').map(l => JSON.parse(l)) : [];
