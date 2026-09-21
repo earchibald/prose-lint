@@ -100,7 +100,7 @@
 </style>
 
 <div class="page">
-  <p class="kicker">Design handbook · 21 September 2026 · version 0.2.1</p>
+  <p class="kicker">Design handbook · 21 September 2026 · version 0.2.3</p>
   <h1>Prose Lint, as a plugin</h1>
   <p class="lede">Prose Lint marks the sentences in Claude's writing that sound like a machine wrote them. It used to be three hooks and a style file, added to a settings file by hand. It is now one Claude Code plugin. One command installs it. The key for the judge is in the system keychain. Claude can change the rules when you ask in plain words.</p>
   <p>This page is about the plugin's design. The <a href="https://claude.ai/artifact/9oAVrAswCMJi6Az4fTdWer">first handbook</a> explains what the tool looks for and what we measured.</p>
@@ -140,6 +140,7 @@
   <h3>The secret key reaches hooks and the server. It does not reach the shell.</h3>
   <p>You were right that a plugin can keep a secret. An option marked <code>sensitive</code> goes to the macOS Keychain, and it never appears in a settings file. But Claude Code hands that value to only two kinds of program: the plugin's hooks, and the plugin's server. A shell command that Claude runs gets nothing. We checked: inside a session, <code>env | grep -c CLAUDE_PLUGIN</code> printed 0.</p>
   <p>So a skill that ran <code>prose-lint report.md</code> in the shell would have no key, and the judge would not run. This is the reason the plugin has a small server. A skill calls the server's <code>lint</code> tool, and the server has the key.</p>
+  <p>The two kinds of program get the key in two ways. A hook finds it in a variable named <code>CLAUDE_PLUGIN_OPTION_API_KEY</code>. The server gets it only if its config file asks for <code>${user_config.api_key}</code>. Claude Code fills in that form, and it leaves the other form as plain text.</p>
   <figure class="wide">
     <svg viewBox="0 0 900 250" role="img" aria-label="The key goes from the keychain through Claude Code to the hook program and to the server. It does not go to a shell command. A skill reaches the judge through the server.">
       <defs><marker id="k1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="d-head"/></marker><marker id="k2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="d-headp"/></marker></defs>
@@ -171,41 +172,40 @@
 
   <h2 id="install">Install</h2>
   <figure class="wide">
-    <svg viewBox="0 0 900 300" role="img" aria-label="Two commands. The first tells Claude Code where the plugin's folder is. The second copies the plugin into Claude Code's cache, puts the key in the keychain, and turns the plugin on in the settings file.">
+    <svg viewBox="0 0 900 300" role="img" aria-label="Two commands. The first tells Claude Code where your list of plugins is. The second copies the plugin into Claude Code's cache, puts the key in the keychain, and turns the plugin on in the settings file.">
       <defs><marker id="i1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="d-head"/></marker></defs>
-      <rect x="10" y="30" width="200" height="90" rx="4" class="d-box"/><text x="24" y="56" class="d-b">The plugin's folder</text><text x="24" y="76" class="d-s">~/Workshop/001-prose-lint</text><text x="24" y="93" class="d-s">a git repo with a list file</text><text x="24" y="108" class="d-s">that names one plugin</text>
+      <rect x="10" y="30" width="200" height="90" rx="4" class="d-box"/><text x="24" y="56" class="d-b">Your list on GitHub</text><text x="24" y="76" class="d-s">earchibald/claude-marketplace</text><text x="24" y="93" class="d-s">One entry names the plugin's</text><text x="24" y="108" class="d-s">repo, earchibald/prose-lint.</text>
       <line x1="210" y1="75" x2="318" y2="75" class="d-line" marker-end="url(#i1)"/><text x="264" y="66" text-anchor="middle" class="d-p">command 1</text><text x="264" y="92" text-anchor="middle" class="d-s">"the list is here"</text>
-      <rect x="320" y="30" width="200" height="90" rx="4" class="d-box"/><text x="334" y="56" class="d-b">Claude Code</text><text x="334" y="76" class="d-s">now knows the list</text><text x="334" y="93" class="d-s">earchibald-tools</text>
+      <rect x="320" y="30" width="200" height="90" rx="4" class="d-box"/><text x="334" y="56" class="d-b">Claude Code</text><text x="334" y="76" class="d-s">now knows the list</text><text x="334" y="93" class="d-s">earchibald-plugins</text>
       <text x="420" y="150" text-anchor="middle" class="d-p">command 2: install, with the key</text>
       <path d="M420 120 V170 H110 V198" class="d-line" marker-end="url(#i1)"/><path d="M420 120 V198" class="d-line" marker-end="url(#i1)"/><path d="M420 120 V170 H730 V198" class="d-line" marker-end="url(#i1)"/>
-      <rect x="10" y="200" width="200" height="90" rx="4" class="d-soft"/><text x="24" y="226" class="d-b">A copy of the plugin</text><text x="24" y="246" class="d-s">~/.claude/plugins/cache/</text><text x="24" y="263" class="d-s">earchibald-tools/prose-lint/0.2.1</text><text x="24" y="280" class="d-s">Claude Code runs this copy.</text>
+      <rect x="10" y="200" width="200" height="90" rx="4" class="d-soft"/><text x="24" y="226" class="d-b">A copy of the plugin</text><text x="24" y="246" class="d-s">~/.claude/plugins/cache/</text><text x="24" y="263" class="d-s">earchibald-plugins/prose-lint/0.2.3</text><text x="24" y="280" class="d-s">Claude Code runs this copy.</text>
       <rect x="320" y="200" width="200" height="90" rx="4" class="d-ok"/><text x="334" y="226" class="d-b">The keychain</text><text x="334" y="246" class="d-s">holds the key for the judge.</text><text x="334" y="263" class="d-s">It is in no settings file.</text>
       <rect x="630" y="200" width="200" height="90" rx="4" class="d-soft"/><text x="644" y="226" class="d-b">~/.claude/settings.json</text><text x="644" y="246" class="d-s">one new line turns the</text><text x="644" y="263" class="d-s">plugin on. The other options</text><text x="644" y="280" class="d-s">go here when you set them.</text>
     </svg>
-    <figcaption>Claude Code runs the copy, not your folder. A change in your folder reaches a session only after a new version number and an update.</figcaption>
+    <figcaption>Claude Code clones the plugin's repo from GitHub and runs that copy. A change reaches a session only after a new version number, a push, and an update.</figcaption>
   </figure>
 
-  <div><span class="termlabel">The two commands, with the real output from this Mac</span>
-<pre class="term"><span class="dim">$</span> claude plugin marketplace add ~/Workshop/001-prose-lint
-<span class="green">✔ Successfully added marketplace: earchibald-tools (declared in user settings)</span>
+  <div><span class="termlabel">The two commands. The install output is the real one from this Mac.</span>
+<pre class="term"><span class="dim">$</span> claude plugin marketplace add earchibald/claude-marketplace   <span class="dim"># this Mac had the list already</span>
 
-<span class="dim">$</span> claude plugin install prose-lint@earchibald-tools --config api_key=<span class="blue">YOUR_TYPESAFE_KEY</span>
-<span class="green">✔ Successfully installed plugin: prose-lint@earchibald-tools (scope: user)</span>
-5 userConfig options not yet set — run /plugin configure prose-lint@earchibald-tools
+<span class="dim">$</span> claude plugin install prose-lint@earchibald-plugins --config api_key=<span class="blue">YOUR_TYPESAFE_KEY</span>
+<span class="green">✔ Successfully installed plugin: prose-lint@earchibald-plugins (scope: user)</span>
+5 userConfig options not yet set — run /plugin configure prose-lint@earchibald-plugins
 in Claude Code, or pass --config KEY=VALUE.</pre></div>
   <p>The five options that are "not yet set" all have a default, so nothing more is needed. Start a new session after the install. A session that is already open keeps its old hooks.</p>
   <p class="warn"><strong>Do not paste the key into a chat with Claude.</strong> A chat is saved in a transcript. Use the install command above, or the configure screen below. Both send the key straight to the keychain.</p>
 
   <h3>Check the install</h3>
   <p>Ask Claude: "is prose-lint working?" The <code>setup</code> skill runs these four checks and reports each one.</p>
-<pre class="term"><span class="dim">1.</span> status        key: <span class="green">set, from the plugin option</span>   version: 0.2.1
+<pre class="term"><span class="dim">1.</span> status        key: <span class="green">set, from the plugin option</span>   version: 0.2.3
 <span class="dim">2.</span> lint          "This check is load-bearing. A guard that cannot fail protects nothing."
                 <span class="green">PH</span> and <span class="green">SA 0.93</span>, judge: ran
 <span class="dim">3.</span> write a file  a prose-lint message arrives right after the write
 <span class="dim">4.</span> status again  the time of the last line in the write log is new</pre>
 
   <h2 id="configure">Configure</h2>
-  <p>Run <code>/plugin configure prose-lint@earchibald-tools</code> inside Claude Code. The drawing below is a mock-up. The titles and the help text are the real ones from the plugin, and the real screen may look different.</p>
+  <p>Run <code>/plugin configure prose-lint@earchibald-plugins</code> inside Claude Code. The drawing below is a mock-up. The titles and the help text are the real ones from the plugin, and the real screen may look different.</p>
   <div class="dialog wide" role="img" aria-label="A mock-up of the configure screen with six options">
     <div class="dialog-head">Configure Prose Lint <span>mock-up</span></div>
     <div class="opt"><div><b>TypeSafe key for the judge</b><small>Kept in the system keychain. Without it, the plugin still checks banned phrases, em dashes, and long sentences.</small></div><span class="val secret">••••••••••••</span></div>
@@ -226,7 +226,7 @@ in Claude Code, or pass --config KEY=VALUE.</pre></div>
       <tr><td><code>session_report</code></td><td>on, off</td><td>on</td></tr>
     </tbody>
   </table></div>
-  <p>To turn the whole plugin off: <code>/plugin disable prose-lint@earchibald-tools</code>.</p>
+  <p>To turn the whole plugin off: <code>/plugin disable prose-lint@earchibald-plugins</code>.</p>
 
   <h2 id="inside">What is inside</h2>
 <pre class="term tree">prose-lint/
@@ -358,11 +358,12 @@ you should know:" (AN)</pre>
   <h3>To change the plugin itself</h3>
 <pre class="term"><span class="dim"># 1. edit the code in ~/Workshop/001-prose-lint, and run the tests</span>
 npm test
-<span class="dim"># 2. raise "version" in .claude-plugin/plugin.json, and commit</span>
+<span class="dim"># 2. raise "version" in .claude-plugin/plugin.json, commit, and push</span>
+git push
 <span class="dim"># 3. tell Claude Code</span>
-claude plugin marketplace update earchibald-tools
-claude plugin update prose-lint@earchibald-tools
-<span class="green">✔ Plugin "prose-lint" updated from 0.2.0 to 0.2.1 for scope user. Restart to apply changes.</span></pre>
+claude plugin marketplace update earchibald-plugins
+claude plugin update prose-lint@earchibald-plugins
+<span class="green">✔ Plugin "prose-lint" updated from 0.2.2 to 0.2.3 for scope user. Restart to apply changes.</span></pre>
   <p>Without a new version number, Claude Code sees no change and keeps the old copy. To try a change with no install, run <code>claude --plugin-dir ~/Workshop/001-prose-lint</code>.</p>
 
   <h2 id="proof">What we tested</h2>
@@ -376,16 +377,21 @@ claude plugin update prose-lint@earchibald-tools
       <tr><td>The skills and the style file load</td><td>The same session listed its skills and its instructions</td><td>Five skills, and the style with the code table</td></tr>
       <tr><td>A shell command gets no plugin values</td><td><code>env | grep -c CLAUDE_PLUGIN</code> inside that session</td><td>0</td></tr>
       <tr><td>The key is not in a settings file</td><td>We read the settings file after the install</td><td>Only the line that turns the plugin on</td></tr>
-      <tr><td>The server gets the key</td><td>The <code>status</code> tool in a real session</td><td>"set, from the plugin option"</td></tr>
+      <tr><td>The server gets the key from the keychain</td><td>With the old key file set aside, a session called the server's <code>lint</code> tool on a sentence that no saved answer covered</td><td>The judge ran and read 1,135 new tokens. <code>status</code> said "set, from the plugin option".</td></tr>
       <tr><td>A hook gets the key from the keychain</td><td>We set the old key file aside, and had a session write a sentence that no saved answer covered</td><td>The judge ran and read 1,135 new tokens</td></tr>
       <tr><td>The old hooks are gone, so nothing runs twice</td><td>One file write in a session after the move</td><td>One log line. Before the move there were two.</td></tr>
-      <tr><td>An update reaches the copy</td><td>We raised the version and ran the update</td><td>The 0.2.1 copy has the comma fix</td></tr>
+      <tr><td>An update reaches the copy</td><td>We raised the version, pushed, and ran the update</td><td>The 0.2.3 copy has the new server config</td></tr>
+      <tr><td>The install comes from GitHub</td><td>We read Claude Code's record of the install</td><td>The copy is in <code>cache/earchibald-plugins</code>, at the commit that was pushed</td></tr>
     </tbody>
   </table></div>
 
+  <h3>A result that was wrong, and how it was found</h3>
+  <p>Version 0.2.1 of this page said that the server had the key. It did not. The server's config asked for the key in a form that Claude Code does not fill in. The server then read the old key file, and <code>status</code> reported the wrong source. I found this when I set the key file aside: the hook still reached the judge, and the server said "not set". Version 0.2.3 asks in the form that works, and two tests hold the fix. Every key check on this page was run with the key file set aside.</p>
+
   <h3>What I changed on this Mac</h3>
   <ul>
-    <li>I installed the plugin for your user, with the key from the old key file. The key went to the keychain through the install command, and it was never printed.</li>
+    <li>I installed the plugin for your user from your GitHub list, <code>earchibald-plugins</code>, with the key from the old key file. The key went to the keychain through the install command, and it was never printed.</li>
+    <li>I first installed it from the local folder. I removed that install and its local list, so there is one copy only.</li>
     <li>I removed the three hand-made hook entries and the <code>outputStyle</code> line from <code>~/.claude/settings.json</code>. Your other hooks are as they were. A dated copy of the file from before the change is beside it, named <code>settings.json.bak-before-plugin-…</code>.</li>
     <li>I moved the hand-installed style file to <code>~/.claude/prose-lint/plain-prose.md.hand-installed</code>. The plugin brings its own.</li>
     <li>I left the old key file, <code>~/.config/prose-lint/env</code>, in place. It lets the shell command reach the judge. Delete it if you want the key in one place only.</li>
@@ -396,8 +402,9 @@ claude plugin update prose-lint@earchibald-tools
     <li><strong>Open sessions need a restart.</strong> A session that was open during the move has neither the old hooks nor the new ones. That includes the session that built this plugin, so its last commits were not checked.</li>
     <li><strong>Two pieces have not been seen live under the plugin.</strong> The session-start report and the reply log are covered by tests. The short test sessions ended before the reply hook could write, because that hook runs in the background.</li>
     <li><strong>A small model could not call the server's tools.</strong> Haiku found the tools and then said it could not use them. Sonnet called all three with no trouble. The hooks do not depend on this.</li>
-    <li><strong>The copy in the cache holds more than it needs.</strong> Claude Code copies the whole folder, with the tests and these handbooks. A later version can move the plugin into a subfolder of the repo.</li>
-    <li><strong>The folder is still in Workshop.</strong> Your layout rules say to promote a project to <code>~/Code</code> when it is real. After that move, remove the list with <code>claude plugin marketplace remove earchibald-tools</code> and add it again at its new path. You also have a list on GitHub, <code>earchibald-plugins</code>. The plugin can be added to that one, and then any of your machines can install it.</li>
+    <li><strong>The copy in the cache holds more than it needs.</strong> Claude Code copies the whole folder, with the tests and these handbooks. A later version can move the plugin into a subfolder of the repo, or keep the handbooks in another place.</li>
+    <li><strong>The plugin's repo on GitHub is private.</strong> Your list is public, and your other plugin repos are public too. While this one is private, only an account with access to it can install the entry. To make it public: <code>gh repo edit earchibald/prose-lint --visibility public --accept-visibility-change-consequences</code>.</li>
+    <li><strong>The working folder is still in Workshop.</strong> The install no longer depends on that path, so you can promote the folder to <code>~/Code</code> at any time.</li>
     <li><strong>No pass mark is proven yet.</strong> This is the same limit as before. The <code>report</code> skill and the three logs are the data for setting the marks.</li>
     <li><strong>Every shell command still starts a small program.</strong> Claude Code can filter a hook by command, but our commits often start with <code>cd folder &amp;&amp;</code>, and the filter would miss them. The program leaves at once when it sees no <code>git</code> or <code>gh</code>.</li>
     <li><strong>The Hamlet test has its own copy of the phrase list.</strong> One of its tests compares the two lists, and that test looks for the tool in <code>~/Workshop</code> or <code>~/Code</code>. It does not look in the plugin cache.</li>
