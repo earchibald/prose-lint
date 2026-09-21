@@ -1,0 +1,455 @@
+<title>Prose Lint Handbook</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Schibsted+Grotesk:wght@600;800&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+  :root {
+    --ground: #f6f8fb; --panel: #ffffff; --ink: #1a2230; --soft: #566273; --rule: #d5dce6;
+    --pencil: #2456a6; --pencil-soft: #e4ecf8; --fault: #b23a2e; --fault-soft: #fbe9e6; --plain: #25704a; --plain-soft: #e3f3ea;
+    --term: #111823; --term-ink: #dfe6f0; --term-dim: #8b98ab;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --ground: #11161d; --panel: #19202a; --ink: #e5e9f0; --soft: #9aa6b8; --rule: #2c3644;
+    --pencil: #86aef2; --pencil-soft: #1d2a40; --fault: #f09084; --fault-soft: #3a211f; --plain: #7fcb9f; --plain-soft: #1a3227;
+    --term: #0b1017; --term-ink: #dfe6f0; --term-dim: #7f8ca0;
+  } }
+  :root[data-theme="dark"] {
+    --ground: #11161d; --panel: #19202a; --ink: #e5e9f0; --soft: #9aa6b8; --rule: #2c3644;
+    --pencil: #86aef2; --pencil-soft: #1d2a40; --fault: #f09084; --fault-soft: #3a211f; --plain: #7fcb9f; --plain-soft: #1a3227;
+    --term: #0b1017; --term-ink: #dfe6f0; --term-dim: #7f8ca0;
+  }
+  body { background: var(--ground); color: var(--ink); font-family: "Atkinson Hyperlegible", Verdana, sans-serif; font-size: 17px; line-height: 1.6; padding-inline: 20px; padding-block: 40px 80px; }
+  .page { max-width: 46rem; margin-inline: auto; display: flex; flex-direction: column; gap: 22px; }
+  .wide { width: min(100%, 60rem); }
+  h1, h2, h3 { font-family: "Schibsted Grotesk", "Atkinson Hyperlegible", sans-serif; text-wrap: balance; line-height: 1.15; margin: 0; }
+  h1 { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.02em; }
+  h2 { font-size: 1.7rem; font-weight: 800; margin-top: 34px; padding-top: 26px; border-top: 2px solid var(--ink); }
+  h3 { font-size: 1.15rem; font-weight: 600; margin-top: 10px; }
+  p, ul, ol { margin: 0; }
+  ul, ol { padding-left: 1.3em; display: flex; flex-direction: column; gap: 6px; }
+  a { color: var(--pencil); }
+  .lede { font-size: 1.2rem; color: var(--ink); }
+  .kicker { font-family: "IBM Plex Mono", monospace; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--soft); }
+  code, .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.88em; }
+  code { background: var(--pencil-soft); padding: 1px 5px; border-radius: 3px; overflow-wrap: anywhere; }
+  nav { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.95rem; }
+  .note { border-left: 4px solid var(--pencil); background: var(--pencil-soft); padding: 12px 16px; }
+  .warn { border-left: 4px solid var(--fault); background: var(--fault-soft); padding: 12px 16px; }
+
+  /* The proof sheet: a faulty sentence with a proofreader's mark, and its plain form. */
+  .proof { background: var(--panel); border: 1px solid var(--rule); display: grid; grid-template-columns: 1fr; }
+  .proof > div { padding: 16px 20px; display: grid; grid-template-columns: 7.5rem 1fr; gap: 6px 16px; align-items: baseline; }
+  .proof > div + div { border-top: 1px dashed var(--rule); }
+  .proof .tag { font-family: "IBM Plex Mono", monospace; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .proof .bad .tag { color: var(--fault); } .proof .good .tag { color: var(--plain); }
+  .mark { text-decoration: underline wavy var(--fault); text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+  @media (max-width: 520px) { .proof > div { grid-template-columns: 1fr; } }
+
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.95rem; background: var(--panel); }
+  th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--rule); }
+  th { font-family: "IBM Plex Mono", monospace; font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--soft); border-bottom: 2px solid var(--ink); }
+  td.bad { color: var(--fault); } td.good { color: var(--plain); }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  figure { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  figcaption { font-size: 0.93rem; color: var(--soft); }
+  svg { max-width: 100%; height: auto; display: block; color: var(--ink); font-family: "Atkinson Hyperlegible", Verdana, sans-serif; }
+  .d-box { fill: var(--panel); stroke: currentColor; stroke-width: 1.4; }
+  .d-soft { fill: var(--pencil-soft); stroke: var(--pencil); stroke-width: 1.4; }
+  .d-net { fill: var(--fault-soft); stroke: var(--fault); stroke-width: 1.4; }
+  .d-ok { fill: var(--plain-soft); stroke: var(--plain); stroke-width: 1.4; }
+  .d-line { stroke: currentColor; stroke-width: 1.4; fill: none; }
+  .d-back { stroke: var(--pencil); stroke-width: 1.6; fill: none; stroke-dasharray: 5 4; }
+  .d-t { fill: currentColor; font-size: 13px; } .d-b { fill: currentColor; font-size: 13px; font-weight: 700; }
+  .d-s { fill: var(--soft); font-size: 11.5px; } .d-p { fill: var(--pencil); font-size: 11.5px; }
+  .d-head { fill: currentColor; } .d-headp { fill: var(--pencil); }
+
+  .term { background: var(--term); color: var(--term-ink); font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.8rem; line-height: 1.55; padding: 14px 16px; border-radius: 6px; overflow-x: auto; white-space: pre; margin: 0; }
+  .term .dim { color: var(--term-dim); } .term .red { color: #f09084; } .term .blue { color: #86aef2; } .term .green { color: #7fcb9f; }
+  .termlabel { font-family: "IBM Plex Mono", monospace; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--soft); }
+  .pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: 16px; }
+  .pair > div { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+
+  .bars { display: grid; grid-template-columns: max-content 1fr max-content; gap: 8px 12px; align-items: center; font-size: 0.93rem; }
+  .bars .track { background: var(--rule); height: 14px; } .bars .fill { background: var(--pencil); height: 14px; }
+  .bars .fill.red { background: var(--fault); } .bars .n { font-variant-numeric: tabular-nums; color: var(--soft); }
+  .steps { counter-reset: s; list-style: none; padding: 0; gap: 14px; }
+  .steps > li { counter-increment: s; display: grid; grid-template-columns: 2rem 1fr; gap: 0 10px; }
+  .steps > li::before { content: counter(s); font-family: "Schibsted Grotesk", sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--pencil); }
+  .steps > li > div { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; }
+  dt { font-weight: 700; } dd { margin: 0; }
+  @media (max-width: 520px) { dl { grid-template-columns: 1fr; gap: 2px; } dd { margin-bottom: 8px; } h1 { font-size: 2rem; } }
+</style>
+
+<div class="page">
+  <p class="kicker">Handbook · 21 September 2026 · ~/Workshop/001-prose-lint</p>
+  <h1>Prose Lint</h1>
+  <p class="lede">Prose Lint reads what Claude writes and marks the sentences that sound like a machine wrote them. It checks chat replies, documents, commit messages, and the text of the game Hamlet. It tells Claude what it found, so that Claude writes the sentence again in plain words.</p>
+
+  <div class="proof" aria-label="An example of a marked sentence and its plain form">
+    <div class="bad"><span class="tag">Marked</span><span>The default three-day soak <span class="mark">carries</span> the oracle.</span></div>
+    <div class="bad"><span class="tag">Why</span><span>A test run cannot carry anything. The sentence gives a lifeless thing an act, and the reader must work out what is meant.</span></div>
+    <div class="good"><span class="tag">Plain</span><span>The oracle runs only in the default three-day soak.</span></div>
+  </div>
+
+  <nav aria-label="Contents">
+    <a href="#patterns">What it looks for</a><a href="#how">How it works</a><a href="#where">Where it runs</a><a href="#install">Install</a><a href="#use">Use</a><a href="#data">What we measured</a><a href="#limits">Limits</a><a href="#appendix">Appendix: a slimmer design</a>
+  </nav>
+
+  <h2 id="words">Six words used on this page</h2>
+  <dl>
+    <dt>Session</dt><dd>One conversation with Claude Code in a terminal.</dd>
+    <dt>Hook</dt><dd>A small program that Claude Code runs by itself at a fixed moment, such as after Claude writes a file.</dd>
+    <dt>Judge</dt><dd>Jev, a small AI model from the company TypeSafe. It answers a yes or no question about a sentence with a number from 0 to 1.</dd>
+    <dt>Finding</dt><dd>One marked sentence, with the name of the rule that marked it.</dd>
+    <dt>Hint</dt><dd>A shape that a program can see but cannot confirm. "Carries" is a hint, because a person can carry wood. Only the judge can turn a hint into a finding.</dd>
+    <dt>Style file</dt><dd>A page of writing rules that Claude Code adds to Claude's instructions at the start of every session.</dd>
+  </dl>
+
+  <h2 id="patterns">What it looks for</h2>
+  <p>The list came from Eugene, from a public list of overused AI phrases, and from sentences in our own reports. Each row shows a real sentence and its plain form.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Pattern</th><th>Do not write</th><th>Write</th><th>Found by</th></tr></thead>
+    <tbody>
+      <tr><td>A thing written as a person</td><td class="bad">The suite owes one run that arrives by simulating.</td><td class="good">Add one run that reaches the date by simulation.</td><td>Judge</td></tr>
+      <tr><td>A saying dressed as a definition</td><td class="bad">A skip is output nobody reads.</td><td class="good">Two tests printed a skip reason on every run. No reviewer read it.</td><td>Judge</td></tr>
+      <tr><td>A quotable general truth</td><td class="bad">A guard that cannot fail protects nothing.</td><td class="good">This guard passes for every input. Give it a case that fails.</td><td>Judge</td></tr>
+      <tr><td>A claim of honesty</td><td class="bad">Here is my honest summary.</td><td class="good">Give the summary.</td><td>Judge</td></tr>
+      <tr><td>An announcement</td><td class="bad">Let me break down what is happening.</td><td class="good">Start with the content.</td><td>Judge</td></tr>
+      <tr><td>A staged reveal</td><td class="bad">The catch: nobody ever ran it.</td><td class="good">No runner names this file, so it never ran.</td><td>Judge</td></tr>
+      <tr><td>An opening compliment</td><td class="bad">Great question!</td><td class="good">Start with the first fact.</td><td>Judge</td></tr>
+      <tr><td>A banned phrase</td><td class="bad">This check is load-bearing.</td><td class="good">Task 3 misses its budget without this check.</td><td>Phrase list, 15 phrases</td></tr>
+      <tr><td>An em dash</td><td class="bad">The run passed — nobody saw it.</td><td class="good">The run passed. Nobody saw it.</td><td>A counted rule</td></tr>
+      <tr><td>A long sentence</td><td class="bad">Any sentence over 25 words.</td><td class="good">Two sentences.</td><td>A counted rule</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">The game is allowed to give a fire or a river an act. "The Night the Fire Ran" is approved text. That rule is for reports and chat, and the game's text has its own, smaller check.</p>
+
+  <h2 id="how">How it works</h2>
+  <p>The tool splits text into sentences and leaves out code, links, and tables. Then each sentence passes through three layers. Two layers are plain code and need no network. The third layer asks the judge.</p>
+  <figure class="wide">
+    <svg viewBox="0 0 900 330" role="img" aria-label="Text is split into sentences. Each sentence goes through a phrase list, counted rules, and judge questions. The results join into one list of findings.">
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="d-head"/></marker></defs>
+      <rect x="10" y="125" width="120" height="70" rx="4" class="d-box"/><text x="70" y="156" text-anchor="middle" class="d-b">Text</text><text x="70" y="175" text-anchor="middle" class="d-s">reply, file, message</text>
+      <line x1="130" y1="160" x2="178" y2="160" class="d-line" marker-end="url(#ah)"/>
+      <rect x="180" y="125" width="140" height="70" rx="4" class="d-box"/><text x="250" y="152" text-anchor="middle" class="d-b">Split</text><text x="250" y="170" text-anchor="middle" class="d-s">into sentences;</text><text x="250" y="185" text-anchor="middle" class="d-s">drop code and links</text>
+      <path d="M320 160 H360 V60 H398" class="d-line" marker-end="url(#ah)"/><path d="M320 160 H398" class="d-line" marker-end="url(#ah)"/><path d="M320 160 H360 V262 H398" class="d-line" marker-end="url(#ah)"/>
+      <rect x="400" y="25" width="250" height="70" rx="4" class="d-soft"/><text x="415" y="52" class="d-b">1. Phrase list</text><text x="415" y="71" class="d-s">15 exact phrases. No network.</text><text x="415" y="86" class="d-s">Also reads headings and table cells.</text>
+      <rect x="400" y="125" width="250" height="70" rx="4" class="d-soft"/><text x="415" y="152" class="d-b">2. Counted rules</text><text x="415" y="171" class="d-s">Em dash. Over 25 words. No network.</text><text x="415" y="186" class="d-s">Also makes hints for the judge.</text>
+      <rect x="400" y="227" width="250" height="88" rx="4" class="d-net"/><text x="415" y="254" class="d-b">3. Judge questions</text><text x="415" y="273" class="d-s">7 yes or no questions, sent to Jev.</text><text x="415" y="288" class="d-s">Needs the network and a key.</text><text x="415" y="303" class="d-s">A saved answer is never asked twice.</text>
+      <path d="M650 60 H700 V150 H748" class="d-line" marker-end="url(#ah)"/><path d="M650 160 H748" class="d-line" marker-end="url(#ah)"/><path d="M650 270 H700 V170 H748" class="d-line" marker-end="url(#ah)"/>
+      <text x="705" y="54" class="d-s">hit</text><text x="660" y="152" class="d-s">hit or hint</text><text x="705" y="288" class="d-s">score 0 to 1</text>
+      <rect x="750" y="120" width="140" height="80" rx="4" class="d-ok"/><text x="820" y="150" text-anchor="middle" class="d-b">Findings</text><text x="820" y="169" text-anchor="middle" class="d-s">line, rule, sentence,</text><text x="820" y="184" text-anchor="middle" class="d-s">and how to fix it</text>
+    </svg>
+    <figcaption>The two blue layers always run. The red layer runs when the network and the key are there. When it cannot run, the output says so, and the hints stay in the list.</figcaption>
+  </figure>
+  <h3>Three details</h3>
+  <ul>
+    <li><strong>A judge answer replaces a hint.</strong> The tool marks the word "carries" as a hint. If the judge scores the sentence under 0.70, the hint is dropped. "Esk carries the wood to the fire" scores 0.05.</li>
+    <li><strong>A long sentence is judged in pieces.</strong> A pattern inside a long sentence gets a lower score. So the tool also sends each clause, and it keeps the best score.</li>
+    <li><strong>All the rules are in one data file.</strong> The file is <code>rules.json</code>. It holds the phrases, the questions, and each pass mark. To ban a new pattern, add a row. No code changes.</li>
+  </ul>
+
+  <h2 id="where">Where it runs</h2>
+  <p>One tool does the reading. Five pieces call it, each at a different moment.</p>
+  <figure class="wide">
+    <svg viewBox="0 0 900 380" role="img" aria-label="A session timeline. The style file acts at the start. The write hook acts after Claude writes a file and sends findings back. The commit hook acts before a commit and stops it once. The reply log acts when a reply ends and only records.">
+      <defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="d-head"/></marker><marker id="ahp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="d-headp"/></marker></defs>
+      <text x="10" y="24" class="d-s">ONE SESSION, LEFT TO RIGHT</text>
+      <line x1="10" y1="70" x2="885" y2="70" class="d-line" marker-end="url(#ah2)"/>
+      <circle cx="110" cy="70" r="6" class="d-head"/><circle cx="330" cy="70" r="6" class="d-head"/><circle cx="550" cy="70" r="6" class="d-head"/><circle cx="770" cy="70" r="6" class="d-head"/>
+      <text x="110" y="52" text-anchor="middle" class="d-b">Session starts</text><text x="330" y="52" text-anchor="middle" class="d-b">Claude writes a file</text><text x="550" y="52" text-anchor="middle" class="d-b">Claude runs git commit</text><text x="770" y="52" text-anchor="middle" class="d-b">Claude's reply ends</text>
+      <line x1="110" y1="76" x2="110" y2="118" class="d-line" marker-end="url(#ah2)"/><line x1="330" y1="76" x2="330" y2="118" class="d-line" marker-end="url(#ah2)"/><line x1="550" y1="76" x2="550" y2="118" class="d-line" marker-end="url(#ah2)"/><line x1="770" y1="76" x2="770" y2="118" class="d-line" marker-end="url(#ah2)"/>
+      <rect x="15" y="120" width="190" height="120" rx="4" class="d-soft"/><text x="28" y="145" class="d-b">Style file</text><text x="28" y="166" class="d-s">The rules and the example</text><text x="28" y="181" class="d-s">pairs go into Claude's</text><text x="28" y="196" class="d-s">instructions.</text><text x="28" y="224" class="d-p">Prevents. Says nothing later.</text>
+      <rect x="235" y="120" width="190" height="120" rx="4" class="d-soft"/><text x="248" y="145" class="d-b">Write hook</text><text x="248" y="166" class="d-s">Reads the new text of a</text><text x="248" y="181" class="d-s">.md or .txt file, about</text><text x="248" y="196" class="d-s">one second.</text><text x="248" y="224" class="d-p">Sends findings back.</text>
+      <rect x="455" y="120" width="190" height="120" rx="4" class="d-soft"/><text x="468" y="145" class="d-b">Commit hook</text><text x="468" y="166" class="d-s">Reads the commit message,</text><text x="468" y="181" class="d-s">or the text of a pull</text><text x="468" y="196" class="d-s">request or an issue.</text><text x="468" y="224" class="d-p">Stops the command once.</text>
+      <rect x="675" y="120" width="190" height="120" rx="4" class="d-box"/><text x="688" y="145" class="d-b">Reply log</text><text x="688" y="166" class="d-s">Reads the chat reply and</text><text x="688" y="181" class="d-s">writes one line to a log.</text><text x="688" y="224" class="d-s">Records. Says nothing.</text>
+      <path d="M330 240 V290 H120 V246" class="d-back" marker-end="url(#ahp)"/><text x="225" y="308" text-anchor="middle" class="d-p">"3 patterns in report.md: rewrite these sentences"</text>
+      <path d="M550 240 V330 H90 V246" class="d-back" marker-end="url(#ahp)"/><text x="320" y="348" text-anchor="middle" class="d-p">"The commit did not run. Rewrite the message."</text>
+      <text x="688" y="290" class="d-s">The reply is already on</text><text x="688" y="305" class="d-s">screen, so a message now</text><text x="688" y="320" class="d-s">would come too late.</text>
+    </svg>
+    <figcaption>The dashed blue lines are messages that go back to Claude. The fifth piece is outside the session. It is a test in the Hamlet project. It fails when the game's text has a banned phrase, an em dash, or a long sentence.</figcaption>
+  </figure>
+
+  <h3>What Claude sees</h3>
+  <div class="pair wide">
+    <div><span class="termlabel">After Claude writes a file</span>
+<pre class="term"><span class="dim">PostToolUse hook:</span>
+prose-lint read the text you just wrote to
+report.md and found 3 banned patterns.
+Rewrite each sentence as a plain fact about
+a named thing, then continue.
+
+report.md:5  <span class="red">phrase</span>  (use: essential, required)
+    This check is load-bearing now.
+report.md:5  <span class="red">aphorism 0.93</span>  (replace the general
+    truth with the fact in this case)
+    A guard that cannot fail protects nothing.</pre></div>
+    <div><span class="termlabel">When Claude tries to commit</span>
+<pre class="term"><span class="dim">$ git commit -m "A hook for commit messages" ...</span>
+<span class="red">The command did not run.</span>
+prose-lint read this commit message and
+found 2 banned patterns.
+
+line 3  <span class="red">aphorism 0.93</span>
+    A message nobody checks is a message
+    nobody trusts.
+line 3  <span class="red">thing_acts 0.82</span>
+    The hook carries the judge to every commit.
+
+<span class="blue">If a sentence is a quotation, run the same
+command again, and it will pass.</span></pre></div>
+  </div>
+  <p>The commit hook stops a message only once. If Claude sends the same text again, the hook lets it through and writes "kept" in the log. A commit message sometimes must quote a faulty sentence, and this rule allows that.</p>
+
+  <h2 id="install">Install</h2>
+  <p>Everything is on Eugene's Mac already. These steps are for a second machine, or for a repair.</p>
+  <ol class="steps">
+    <li><div><p><strong>Get the folder.</strong> The tool needs Node 22 or newer and nothing else.</p><pre class="term">git clone &lt;the repo&gt; ~/Workshop/001-prose-lint
+cd ~/Workshop/001-prose-lint &amp;&amp; npm test      <span class="dim"># 69 tests, under one second</span></pre></div></li>
+    <li><div><p><strong>Store the key for the judge.</strong> Keep it out of every settings file and out of every repo.</p><pre class="term">mkdir -p ~/.config/prose-lint &amp;&amp; chmod 700 ~/.config/prose-lint
+echo 'TYPESAFE_API_KEY=...' &gt; ~/.config/prose-lint/env
+chmod 600 ~/.config/prose-lint/env</pre><p>Without a key the first two layers still run, and the last line of output says that the judge did not.</p></div></li>
+    <li><div><p><strong>Add the style file.</strong> Copy <code>plain-prose.md</code> to <code>~/.claude/output-styles/</code>. Then set one line in <code>~/.claude/settings.json</code>.</p><pre class="term">"outputStyle": "Plain prose"</pre></div></li>
+    <li><div><p><strong>Add the three hooks</strong> to the <code>hooks</code> part of the same settings file. Keep any hook that is already there.</p><pre class="term">"Stop":        [{ "hooks": [{ "type": "command", "async": true, "timeout": 60,
+                 "command": "node ~/Workshop/001-prose-lint/hooks/stop-log.js" }] }],
+"PostToolUse": [{ "matcher": "Write|Edit|MultiEdit",
+                 "hooks": [{ "type": "command", "timeout": 45,
+                 "command": "node ~/Workshop/001-prose-lint/hooks/write-feedback.js" }] }],
+"PreToolUse":  [{ "matcher": "Bash",
+                 "hooks": [{ "type": "command", "timeout": 45,
+                 "command": "node ~/Workshop/001-prose-lint/hooks/commit-check.js" }] }]</pre></div></li>
+    <li><div><p><strong>Check it.</strong> Start a new session and ask Claude to write a Markdown file that holds the sentence "This check is load-bearing." Claude should get a finding at once.</p></div></li>
+  </ol>
+  <p class="warn"><strong>The settings file names the folder by its full path.</strong> If the folder moves, change the three paths. A hook that cannot start fails without any message.</p>
+
+  <h2 id="use">Use</h2>
+  <h3>From the command line</h3>
+<pre class="term">prose-lint report.md notes.md      <span class="dim"># all three layers</span>
+prose-lint --no-jev report.md      <span class="dim"># no network: phrases, counted rules, hints</span>
+git diff | prose-lint --json       <span class="dim"># text in, JSON out</span>
+prose-lint-log --since 2026-09-20  <span class="dim"># what the reply log has recorded</span></pre>
+  <p>The exit code is 0 for clean text, 1 for findings, and 2 when the tool cannot run.</p>
+  <h3>Common jobs</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>To do this</th><th>Do this</th></tr></thead>
+    <tbody>
+      <tr><td>Ban a new phrase</td><td>Add a row to <code>phrases</code> in <code>rules.json</code>, with an example sentence. A test checks that the example matches.</td></tr>
+      <tr><td>Ban a new pattern with no fixed words</td><td>Add a question to <code>questions</code>. Write what counts as yes and what counts as no. Test it on three sentences that should match and three that should not.</td></tr>
+      <tr><td>Change a question</td><td>Raise its <code>version</code> number. The saved answers for that question are then asked again.</td></tr>
+      <tr><td>Make a question stricter or looser</td><td>Change its <code>min</code>, the score at which it reports.</td></tr>
+      <tr><td>Keep the hook away from a file</td><td>Add part of its path to <code>hook.ignore</code>. The approved game text is there already.</td></tr>
+      <tr><td>Turn one piece off</td><td>Remove its entry from <code>~/.claude/settings.json</code>. For the style file, run <code>/output-style default</code>.</td></tr>
+      <tr><td>Check the game's text</td><td>In Hamlet, <code>node --test tests/prose.js</code> is the test, and <code>npm run prose</code> prints the judge's report for the review panel.</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Where things are kept</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Thing</th><th>Place</th></tr></thead>
+    <tbody>
+      <tr><td>The tool, its hooks, and its tests</td><td><code>~/Workshop/001-prose-lint</code></td></tr>
+      <tr><td>The three logs: replies, file writes, commits</td><td><code>~/.claude/prose-lint/chat.jsonl</code>, <code>writes.jsonl</code>, <code>commits.jsonl</code></td></tr>
+      <tr><td>Saved judge answers</td><td><code>~/.cache/prose-lint/jev.json</code></td></tr>
+      <tr><td>The key</td><td><code>~/.config/prose-lint/env</code></td></tr>
+      <tr><td>The style file</td><td><code>~/.claude/output-styles/plain-prose.md</code></td></tr>
+      <tr><td>The game's test</td><td>Hamlet pull request 119, <code>tests/prose.js</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="data">What we measured</h2>
+  <p>Each number below has its conditions beside it. All of it was measured on 20 and 21 September 2026 with the judge model Jev 1.13.</p>
+
+  <h3>Can the judge tell a faulty sentence from a plain one?</h3>
+  <p>We wrote one faulty sentence for each pattern, and several plain ones. A score near 1 means "yes, this is the pattern".</p>
+  <div class="bars wide" role="img" aria-label="Judge scores for planted sentences. Faulty sentences score between 0.80 and 0.99. Plain sentences score 0.16 or less. Two patterns scored poorly.">
+    <span>"Here is my honest summary"</span><div class="track"><div class="fill red" style="width:99%"></div></div><span class="n">0.99</span>
+    <span>"Let me break down…"</span><div class="track"><div class="fill red" style="width:97%"></div></div><span class="n">0.97</span>
+    <span>"The catch: nobody ran it"</span><div class="track"><div class="fill red" style="width:97%"></div></div><span class="n">0.97</span>
+    <span>"A guard that cannot fail…"</span><div class="track"><div class="fill red" style="width:93%"></div></div><span class="n">0.93</span>
+    <span>"A number travels with…"</span><div class="track"><div class="fill red" style="width:89%"></div></div><span class="n">0.89</span>
+    <span>"A sweep … is a sweep that…"</span><div class="track"><div class="fill red" style="width:84%"></div></div><span class="n">0.84</span>
+    <span>Plain: "The soak has six seeds"</span><div class="track"><div class="fill" style="width:16%"></div></div><span class="n">0.16</span>
+    <span>Plain: "Esk carries the wood"</span><div class="track"><div class="fill" style="width:5%"></div></div><span class="n">0.05</span>
+    <span>Plain: "The wolf hides in the pines"</span><div class="track"><div class="fill" style="width:2%"></div></div><span class="n">0.02</span>
+  </div>
+  <p>Two patterns did poorly. "Not X, it is Y" scored 0.68 on its planted sentence. A list of three for rhythm scored 0.36, so plain code looks for that one and reports it only as a hint.</p>
+
+  <h3>Does the judge agree with human reviewers?</h3>
+  <p>Three reviewers had already judged 39 lines of game text. They named 9 pairs of lines as repeats of each other. We gave the judge all 283 possible pairs. It ranked all 9 named pairs in its top 35. "The dry room" scored 0.88 for a modern word, and the next line scored 0.52.</p>
+
+  <h3>How common are the patterns in our own writing?</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Text</th><th>Size</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>The last 40 commit messages in Hamlet, merges left out</td><td class="num">40 messages</td><td>34 had a finding: 64 things written as a person, 8 staged reveals, 7 quotable truths, 115 long sentences</td></tr>
+      <tr><td>Chat replies, from the reply log, 6 sessions</td><td class="num">43 replies, 588 sentences</td><td>33 replies had a finding. Per 100 sentences: 10 long sentences, 5 em dashes, 5 things written as a person</td></tr>
+      <tr><td>The memory index that every Hamlet session loads</td><td class="num">69 lines</td><td>16 findings before a rewrite, 6 after. Most titles were sayings such as "A skip is output nobody reads".</td></tr>
+      <tr><td>Hamlet's game text</td><td class="num">5,721 strings and 215 story lines</td><td>No banned phrase. 2 em dashes in one menu. The first version of the test missed them.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Cost and speed</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Measure</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Price of the judge</td><td>$42 for one billion tokens read. Answers are free.</td></tr>
+      <tr><td>Total spent in two days, all tests and all hooks</td><td>Under 50 cents</td></tr>
+      <tr><td>One sentence, seven questions</td><td>About 1,100 tokens. The seven questions are about 1,075 of them, and the sentence is about 25.</td></tr>
+      <tr><td>A file write of four sentences</td><td>0.8 seconds</td></tr>
+      <tr><td>A report of 133 sentences</td><td>3.0 seconds the first time, 0.04 seconds from saved answers</td></tr>
+      <tr><td>Saved answers so far</td><td>35,329 answers in a 1.1 MB file</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>The code</h3>
+  <p>The tool is about 430 lines of JavaScript with no outside packages. Its tests are 525 lines: 69 tests that run in under one second and never touch the network. Each test was written first and seen to fail. The rule file is 259 lines.</p>
+
+  <h3>Faults that the work found in itself</h3>
+  <ul>
+    <li>The first text finder for Hamlet missed 69 strings. Two were real em dashes in a menu. A reviewer found this with a second, independent finder.</li>
+    <li>The commit hook stopped a good message for "a sentence of 46 words". It was two sentences. The splitter did not know that a sentence can start with a lowercase file name.</li>
+    <li>The tool cut its own output at 65,536 bytes when another program read it.</li>
+    <li>The tool skipped "Good." and "Great question!" because both are under three words. Those are the compliments it must catch.</li>
+  </ul>
+
+  <h2 id="limits">Limits</h2>
+  <ul>
+    <li><strong>No pass mark is proven.</strong> Each <code>min</code> value is a first guess. Scores between 0.70 and 0.79 for "a thing written as a person" are often wrong. "Five suites landed on dev" scored 0.77.</li>
+    <li><strong>The reply log cannot stop a reply.</strong> The reply is on screen before the hook runs. The style file does the real work for chat.</li>
+    <li><strong>The style file does not reach helper agents.</strong> A helper agent has its own instructions. The write hook and the commit hook do reach it, and we tested that.</li>
+    <li><strong>Text written by a shell command is not seen.</strong> If Claude writes a file with <code>cat</code> or <code>sed</code>, the write hook does not run.</li>
+    <li><strong>Claude can learn to dodge the questions.</strong> A new habit that no question names will pass. The human review panel stays the final judge, and the rule file grows when someone sees a new habit.</li>
+    <li><strong>Every shell command now starts a small program.</strong> The commit hook costs about 40 milliseconds on each one.</li>
+  </ul>
+
+  <h2 id="appendix">Appendix: a slimmer design</h2>
+  <p>The system works, and it is heavier than it needs to be. It has four entries in a settings file, three long message formats, and full paths that break when a folder moves. This appendix proposes a lighter form. Nothing here is built yet.</p>
+
+  <h3>What is heavy today</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Weight</th><th>Measured</th></tr></thead>
+    <tbody>
+      <tr><td>Each message repeats its instructions and the file path</td><td>A message for 3 findings is 911 characters. The path, written 4 times, is 328. The standing instructions are 323. The findings are the rest.</td></tr>
+      <tr><td>Each message lands in Claude's working memory and stays there</td><td>Twenty file writes with findings add about 4,500 tokens. Most of that is the same instructions and paths, repeated.</td></tr>
+      <tr><td>Installation is five manual steps</td><td>See the install section above.</td></tr>
+      <tr><td>The commit hook runs on every shell command</td><td>About 40 ms each</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Idea 1: teach the code once, then send only the code</h3>
+  <p>The style file already reaches Claude at the start of every session. Put a short legend there: a two-letter code for each pattern, and what to do about it. Then a hook message needs only the line, the code, and a few words of the sentence.</p>
+  <div class="pair wide">
+    <div><span class="termlabel">Today: 911 characters</span>
+<pre class="term">prose-lint read the text you just wrote to
+/Users/…/reports/2026-09-21-example.md and
+found 3 banned patterns.
+Rewrite each sentence as a plain fact about a
+named thing, then continue. Leave a sentence as
+it is only when it is a quotation or text the
+user approved word for word.
+
+/Users/…/example.md:5  phrase  (use: essential…)
+    This check is load-bearing now.
+/Users/…/example.md:5  aphorism 0.93  (replace…)
+    A guard that cannot fail protects nothing.
+/Users/…/example.md:5  thing_acts 0.70  (say…)
+    This check is load-bearing now.</pre></div>
+    <div><span class="termlabel">Proposed: 149 characters</span>
+<pre class="term"><span class="green">prose-lint example.md:
+L5 PH "load-bearing"
+L5 SA "A guard that cannot fail…"
+L5 TP "This check is…"</span>
+
+<span class="dim">Legend, taught once in the style file:
+PH  banned phrase: use the plain word
+SA  saying: state the fact in this case
+TP  thing as person: say what it is or has
+DF  saying as definition   HO  claim of honesty
+AN  announcement           RV  staged reveal
+CO  compliment             LS  long sentence
+ED  em dash</span></pre></div>
+  </div>
+  <p>The proposed message is one sixth of the size. The risk is that a bare code is easier to ignore than a full sentence. We can test that: send codes in half of the sessions for a week, and compare how often the next edit fixes the sentence. The write log already records each later edit.</p>
+
+  <h3>Idea 2: a short report at the start of each session</h3>
+  <p>The reply hook records every chat reply, and today nobody reads the record. A small hook at the start of a session could read the log and give Claude four lines about its own recent writing.</p>
+<pre class="term"><span class="green">prose-lint, your last 40 replies in this project:
+  TP 28  LS 59  ED 30  RV 16   (per 100 sentences: 5, 10, 5, 3)
+  worst: "That check line carries the session name."
+  down from last week: AN 12 → 3</span></pre>
+  <p>The box above is a mock-up, and its last line uses example numbers. The report costs about 60 tokens once for each session. It uses Claude's own sentences as the examples. We expect Claude to learn more from a sentence it wrote yesterday than from a stock example. The report also puts the reply log to use.</p>
+
+  <h3>Idea 3: package it as a Claude Code plugin</h3>
+  <p>A plugin is a folder that Claude Code installs with one command. It can hold hooks, a style file, and commands. A hook inside a plugin names its own folder with <code>${CLAUDE_PLUGIN_ROOT}</code>, so a moved folder breaks nothing.</p>
+  <div class="pair wide">
+    <div><span class="termlabel">The plugin folder, proposed</span>
+<pre class="term">prose-lint/
+  .claude-plugin/plugin.json   <span class="dim">name, version</span>
+  hooks/hooks.json             <span class="dim">the hook entries</span>
+  hooks/dispatch.js            <span class="dim">one program for all events</span>
+  output-styles/plain-prose.md <span class="dim">the rules and the legend</span>
+  commands/check.md            <span class="dim">/prose-lint:check &lt;file&gt;</span>
+  commands/report.md           <span class="dim">/prose-lint:report</span>
+  lib/  rules.json  tests/</pre></div>
+    <div><span class="termlabel">Install and remove, proposed</span>
+<pre class="term">/plugin install prose-lint@earchibald
+<span class="dim"># hooks, style file, and commands arrive together</span>
+
+/plugin disable prose-lint
+<span class="dim"># everything is off in one step</span></pre>
+      <p>A plugin can mark its style file <code>force-for-plugin</code>. Then the style is active whenever the plugin is on, and nobody needs to edit a settings file.</p></div>
+  </div>
+
+  <h3>Idea 4: fewer hooks</h3>
+  <figure class="wide">
+    <svg viewBox="0 0 900 300" role="img" aria-label="Today four settings entries start three programs that send long messages. In the proposal one plugin holds one program. Two events send short codes, and the session start sends a short report.">
+      <defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="d-head"/></marker></defs>
+      <text x="10" y="22" class="d-s">TODAY</text><text x="470" y="22" class="d-s">PROPOSED</text>
+      <line x1="448" y1="10" x2="448" y2="290" class="d-line" stroke-dasharray="3 5"/>
+      <rect x="10" y="36" width="130" height="50" rx="4" class="d-box"/><text x="75" y="58" text-anchor="middle" class="d-t">settings.json</text><text x="75" y="75" text-anchor="middle" class="d-s">4 entries by hand</text>
+      <line x1="140" y1="52" x2="188" y2="52" class="d-line" marker-end="url(#ah3)"/><path d="M140 61 H165 V131 H188" class="d-line" marker-end="url(#ah3)"/><path d="M140 70 H155 V211 H188" class="d-line" marker-end="url(#ah3)"/>
+      <rect x="190" y="36" width="120" height="40" rx="4" class="d-soft"/><text x="250" y="61" text-anchor="middle" class="d-t">write hook</text>
+      <rect x="190" y="111" width="120" height="40" rx="4" class="d-soft"/><text x="250" y="136" text-anchor="middle" class="d-t">commit hook</text>
+      <rect x="190" y="191" width="120" height="40" rx="4" class="d-box"/><text x="250" y="216" text-anchor="middle" class="d-t">reply log</text>
+      <line x1="310" y1="56" x2="358" y2="56" class="d-line" marker-end="url(#ah3)"/><line x1="310" y1="131" x2="358" y2="131" class="d-line" marker-end="url(#ah3)"/>
+      <text x="362" y="52" class="d-s">911 characters</text><text x="362" y="67" class="d-s">each time</text><text x="362" y="127" class="d-s">a similar</text><text x="362" y="142" class="d-s">size</text>
+      <text x="320" y="216" class="d-s">tells nobody</text>
+      <text x="10" y="270" class="d-s">The commit hook starts on every shell command.</text>
+
+      <rect x="470" y="36" width="130" height="50" rx="4" class="d-ok"/><text x="535" y="58" text-anchor="middle" class="d-t">one plugin</text><text x="535" y="75" text-anchor="middle" class="d-s">one install command</text>
+      <line x1="600" y1="61" x2="638" y2="61" class="d-line" marker-end="url(#ah3)"/>
+      <rect x="640" y="36" width="110" height="195" rx="4" class="d-soft"/><text x="695" y="128" text-anchor="middle" class="d-t">one program,</text><text x="695" y="146" text-anchor="middle" class="d-t">all events</text>
+      <line x1="750" y1="56" x2="778" y2="56" class="d-line" marker-end="url(#ah3)"/><line x1="750" y1="131" x2="778" y2="131" class="d-line" marker-end="url(#ah3)"/><line x1="750" y1="211" x2="778" y2="211" class="d-line" marker-end="url(#ah3)"/>
+      <text x="782" y="52" class="d-s">file write:</text><text x="782" y="67" class="d-p">codes, ~150 chars</text>
+      <text x="782" y="127" class="d-s">commit:</text><text x="782" y="142" class="d-p">codes, ~150 chars</text>
+      <text x="782" y="207" class="d-s">session start:</text><text x="782" y="222" class="d-p">4-line report</text>
+      <text x="470" y="255" class="d-s">The reply log still records, and now it feeds the report.</text>
+      <text x="470" y="273" class="d-s">The commit check runs only for git and gh commands.</text>
+    </svg>
+    <figcaption>The number of moments stays about the same, because Claude Code needs one entry for each moment. What shrinks is the setup, the size of each message, and the work done on ordinary shell commands.</figcaption>
+  </figure>
+  <p>Claude Code lets a hook name the commands it cares about, with an <code>if</code> rule such as <code>Bash(git commit *)</code>. Our commits often start with <code>cd folder &amp;&amp;</code>, and that rule would miss them. So the plugin should test the command text itself and leave at once when it sees no <code>git</code> or <code>gh</code>. It does this today.</p>
+
+  <h3>An idea we measured and do not propose</h3>
+  <p>We tried to send the judge only the sentences that plain code finds suspicious. A suspicious sentence has a listed verb, a colon, or fewer than seven words. Over 1,204 sentences this cut the requests by half. It also lost 64 of 176 findings, and 50 of those were things written as a person. The verb list is too short to find them. The hooks spent 8 cents in their first evening, across six sessions. So this saving is not worth the loss.</p>
+
+  <h3>Other options, in brief</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Option</th><th>Gain</th><th>Cost or risk</th></tr></thead>
+    <tbody>
+      <tr><td>An editor helper that Claude calls before it ships a long document. The helper lints, rewrites, and returns only the clean text.</td><td>No findings enter the main session's memory.</td><td>A rewrite by a helper can change a fact. The review panel found this once already.</td></tr>
+      <tr><td>Let the reply hook ask for a rewrite when a reply has three or more strong findings</td><td>Chat gets enforcement, not only prevention.</td><td>The reader sees the first reply and then a second one. Eugene chose "log only" for now.</td></tr>
+      <tr><td>Fix banned phrases in the file by program</td><td>No message at all for the simplest fault</td><td>"Load-bearing" has no single replacement. The right replacement is different in each sentence.</td></tr>
+      <tr><td>Use the human panel's verdicts to set each pass mark</td><td>Fewer wrong findings between 0.70 and 0.79</td><td>Needs a few weeks of panel results first</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>A proposed order</h3>
+  <ol class="steps">
+    <li><div><p><strong>Build the plugin around the code we have.</strong> One dispatch program, the style file, and two commands. This removes the manual install and the full paths. It changes no behaviour.</p></div></li>
+    <li><div><p><strong>Add the legend and the short codes</strong>, with a setting that keeps the long form. Run both for a week and compare the fix rate from the write log.</p></div></li>
+    <li><div><p><strong>Add the session-start report.</strong> It needs only the log that exists.</p></div></li>
+    <li><div><p><strong>Set the pass marks from panel verdicts</strong> when enough of them exist.</p></div></li>
+  </ol>
+  <p class="note">The style file stays the most important piece in every version. It is the only piece that acts before Claude writes. Every hook acts after.</p>
+</div>
