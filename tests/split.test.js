@@ -39,3 +39,7 @@ test('a long sentence splits into clauses, and a short one does not', () => {
   assert.equal(c[0], long, 'the whole sentence comes first');
   assert.ok(c.includes('so the default three-day soak carries the oracle.'), JSON.stringify(c));
 });
+
+test('a one-word or two-word sentence is kept, because an opening affirmation is that short', () => {
+  assert.deepEqual(sentences('Good. Noted, both. The run passed on every seed.').map(x => x.text), ['Good.', 'Noted, both.', 'The run passed on every seed.']);
+});
