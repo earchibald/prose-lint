@@ -32,6 +32,19 @@ Judge answers are kept in `~/.cache/prose-lint/jev.json`. A second run over the 
 
 `prose-lint-log` prints a summary of the log. `prose-lint-log --since 2026-09-20` starts from a date.
 
+## The write hook
+
+`hooks/write-feedback.js` is a Claude Code PostToolUse hook for Write, Edit, and MultiEdit. It lints the new text of a prose file. If it finds a banned phrase, a counted fault, or a pattern that the judge confirms, it sends the findings back to the session that wrote the text. Each finding names the file, the line, the rule, and a way to fix the sentence.
+
+The hook is silent for clean text, and it never fails the tool call. It does not send hints, because only the judge can confirm one. Every write is logged to `~/.claude/prose-lint/writes.jsonl`, hints included.
+
+The `hook` section of `rules.json` controls the hook:
+
+- `proseExtensions`: the hook reads only these file types. Source code is not read.
+- `ignore`: a path that holds one of these strings is skipped. Approved game text is in this list, because it is used word for word.
+- `ruleIgnore`: a rule that is off for some paths. The memory index keeps its em dash.
+- `maxFindings`: the session gets this many findings, and a count of the others.
+
 ## Rules
 
 `rules.json` holds every rule as data.

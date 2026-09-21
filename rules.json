@@ -1,46 +1,259 @@
 {
-  "limits": { "sentenceWords": 25, "clauseWords": 18 },
+  "limits": {
+    "sentenceWords": 25,
+    "clauseWords": 18
+  },
+  "hook": {
+    "proseExtensions": [
+      ".md",
+      ".mdx",
+      ".markdown",
+      ".txt",
+      ".rst"
+    ],
+    "ignore": [
+      "/node_modules/",
+      "/approved-text.md",
+      "/.claude/output-styles/",
+      "/001-prose-lint/",
+      "/prose-lint/",
+      "/.superpowers/",
+      "/CHANGELOG"
+    ],
+    "ruleIgnore": {
+      "em-dash": [
+        "/memory/MEMORY.md"
+      ]
+    },
+    "maxFindings": 12
+  },
   "phrases": [
-    { "re": "load[- ]bearing", "alt": "essential, required, or say what depends on it", "example": "This check is load-bearing.", "source": "hall-of-shame" },
-    { "re": "at the intersection of", "alt": "say which two things are combined", "example": "It sits at the intersection of art and code.", "source": "hall-of-shame" },
-    { "re": "(have|has|got) the full picture", "alt": "cut it, and state what is known", "example": "Now I have the full picture.", "source": "hall-of-shame" },
-    { "re": "I have what I need", "alt": "cut it", "example": "I have what I need to begin.", "source": "hall-of-shame" },
-    { "re": "a real gap", "alt": "say what is missing", "example": "That is a real gap in the plan.", "source": "hall-of-shame" },
-    { "re": "delv(e|es|ed|ing)", "alt": "examine, read, or look at", "example": "We delve into the log.", "source": "hall-of-shame" },
-    { "re": "tapestry", "alt": "name the real structure", "example": "A rich tapestry of systems.", "source": "hall-of-shame" },
-    { "re": "testament to", "alt": "shows or proves", "example": "It is a testament to the design.", "source": "hall-of-shame" },
-    { "re": "let('s| us) break (this|that|it) down", "alt": "cut it, and state the point", "example": "Let's break this down.", "source": "hall-of-shame" },
-    { "re": "it('s| is) important to (remember|note)", "alt": "state the fact", "example": "It is important to remember the flag.", "source": "hall-of-shame" },
-    { "re": "navigat(e|es|ed|ing) the [a-z ]{0,20}landscape", "alt": "compare the options", "example": "We navigate the landscape of tools.", "source": "hall-of-shame" },
-    { "re": "honest (accounting|summary|answer|assessment|take)", "alt": "summary, or state the facts", "example": "Here is my honest summary.", "source": "hall-of-shame" },
-    { "re": "in the realm of", "alt": "in", "example": "In the realm of testing, it holds.", "source": "hall-of-shame" },
-    { "re": "at its core", "alt": "cut it", "example": "At its core, the engine is a loop.", "source": "hall-of-shame" },
-    { "re": "step[- ]change", "alt": "a large improvement, with the number", "example": "This is a step-change in speed.", "source": "hall-of-shame" }
+    {
+      "re": "load[- ]bearing",
+      "alt": "essential, required, or say what depends on it",
+      "example": "This check is load-bearing.",
+      "source": "hall-of-shame"
+    },
+    {
+      "re": "at the intersection of",
+      "alt": "say which two things are combined",
+      "example": "It sits at the intersection of art and code.",
+      "source": "hall-of-shame"
+    },
+    {
+      "re": "(have|has|got) the full picture",
+      "alt": "cut it, and state what is known",
+      "example": "Now I have the full picture.",
+      "source": "hall-of-shame"
+    },
+    {
+      "re": "I have what I need",
+      "alt": "cut it",
+      "example": "I have what I need to begin.",
+      "source": "hall-of-shame"
+    },
+    {
+      "re": "a real gap",
+      "alt": "say what is missing",
+      "example": "That is a real gap in the plan.",
+      "source": "hall-of-shame"
+    },
+    {
+      "re": "delv(e|es|ed|ing)",
+      "alt": "examine, read, or look at",
+      "example": "We delve into the log.",
+      "source": "hall-of-shame"
+    },
+    {
+      "re": "tapestry",
+      "alt": "name the real structure",
+      "example": "A rich tapestry of systems.",
+      "source": "hall-of-shame"
+    },
+    {
+      "re": "testament to",
+      "alt": "shows or proves",
+      "example": "It is a testament to the design.",
+      "source": "hall-of-shame"
+    },
+    {
+      "re": "let('s| us) break (this|that|it) down",
+      "alt": "cut it, and state the point",
+      "example": "Let's break this down.",
+      "source": "hall-of-shame"
+    },
+    {
+      "re": "it('s| is) important to (remember|note)",
+      "alt": "state the fact",
+      "example": "It is important to remember the flag.",
+      "source": "hall-of-shame"
+    },
+    {
+      "re": "navigat(e|es|ed|ing) the [a-z ]{0,20}landscape",
+      "alt": "compare the options",
+      "example": "We navigate the landscape of tools.",
+      "source": "hall-of-shame"
+    },
+    {
+      "re": "honest (accounting|summary|answer|assessment|take)",
+      "alt": "summary, or state the facts",
+      "example": "Here is my honest summary.",
+      "source": "hall-of-shame"
+    },
+    {
+      "re": "in the realm of",
+      "alt": "in",
+      "example": "In the realm of testing, it holds.",
+      "source": "hall-of-shame"
+    },
+    {
+      "re": "at its core",
+      "alt": "cut it",
+      "example": "At its core, the engine is a loop.",
+      "source": "hall-of-shame"
+    },
+    {
+      "re": "step[- ]change",
+      "alt": "a large improvement, with the number",
+      "example": "This is a step-change in speed.",
+      "source": "hall-of-shame"
+    }
   ],
-  "agentVerbs": ["carry", "carries", "carried", "carrying", "ride", "rides", "rode", "riding", "owe", "owes", "owed", "earn", "earns", "earned", "pay", "pays", "paid", "travel", "travels", "travelled", "traveled", "land", "lands", "landed", "live", "lives", "lived", "sit", "sits", "sat", "hide", "hides", "hid", "buy", "buys", "bought", "wear", "wears", "wearing", "teach", "teaches", "taught", "speak", "speaks", "spoke", "lie", "lies", "lied", "survive", "survives", "survived", "inherit", "inherits", "inherited"],
+  "agentVerbs": [
+    "carry",
+    "carries",
+    "carried",
+    "carrying",
+    "ride",
+    "rides",
+    "rode",
+    "riding",
+    "owe",
+    "owes",
+    "owed",
+    "earn",
+    "earns",
+    "earned",
+    "pay",
+    "pays",
+    "paid",
+    "travel",
+    "travels",
+    "travelled",
+    "traveled",
+    "land",
+    "lands",
+    "landed",
+    "live",
+    "lives",
+    "lived",
+    "sit",
+    "sits",
+    "sat",
+    "hide",
+    "hides",
+    "hid",
+    "buy",
+    "buys",
+    "bought",
+    "wear",
+    "wears",
+    "wearing",
+    "teach",
+    "teaches",
+    "taught",
+    "speak",
+    "speaks",
+    "spoke",
+    "lie",
+    "lies",
+    "lied",
+    "survive",
+    "survives",
+    "survived",
+    "inherit",
+    "inherits",
+    "inherited"
+  ],
   "questions": {
-    "thing_acts": { "version": 1, "min": 0.7, "clauses": true, "type": "noul",
+    "thing_acts": {
+      "fix": "say what the thing is or has, or make a person the subject",
+      "version": 1,
+      "min": 0.7,
+      "clauses": true,
+      "type": "noul",
       "instructions": "In the sentence in `sentence`, the subject of a verb is a lifeless or abstract thing, and the verb is a physical or social act that only a living agent can do. The writer used the act as a figure of speech. A plain \"is\", \"has\", or \"contains\", or a person as the subject, would say the same thing.",
-      "criteria": { "true": "A thing such as a test, file, number, rule, report, run, or comment is said to carry, ride, owe, earn, pay, travel, sit, live, land, hide, tell, speak, agree, refuse, want, know, notice, or a like act.",
-        "false": "The subject is a person, an animal, or a character. Or the verb is the literal technical word for what that thing does: a test fails or passes, a function returns or calls, a script writes or prints, a rule applies, a number rises. Or the sentence is an instruction." } },
-    "x_is_a_y": { "version": 1, "min": 0.7, "clauses": true, "type": "noul",
+      "criteria": {
+        "true": "A thing such as a test, file, number, rule, report, run, or comment is said to carry, ride, owe, earn, pay, travel, sit, live, land, hide, tell, speak, agree, refuse, want, know, notice, or a like act.",
+        "false": "The subject is a person, an animal, or a character. Or the verb is the literal technical word for what that thing does: a test fails or passes, a function returns or calls, a script writes or prints, a rule applies, a number rises. Or the sentence is an instruction."
+      }
+    },
+    "x_is_a_y": {
+      "fix": "state the fact about the named thing; keep the shape only for a real definition",
+      "version": 1,
+      "min": 0.7,
+      "clauses": true,
+      "type": "noul",
       "instructions": "The text in `sentence` contains a clause of the shape \"an X is a Y that ...\": a general kind of thing, named with \"a\", \"an\", or no article, is said to BE another noun, and that noun is followed by a clause that makes the point. The clause gives a verdict or a lesson about the kind of thing. It does not tell the reader what a term means.",
-      "criteria": { "true": "A maxim in the form of a definition, such as \"a test that cannot fail is a comment that runs\" or \"a skip is output nobody reads\". It may also be negative: \"an X is not a Y\".",
-        "false": "A glossary definition that tells what a named term means in this project. Or a statement about one specific named thing. Or a sentence with no \"X is a Y\" clause." } },
-    "aphorism": { "version": 1, "min": 0.8, "type": "noul",
+      "criteria": {
+        "true": "A maxim in the form of a definition, such as \"a test that cannot fail is a comment that runs\" or \"a skip is output nobody reads\". It may also be negative: \"an X is not a Y\".",
+        "false": "A glossary definition that tells what a named term means in this project. Or a statement about one specific named thing. Or a sentence with no \"X is a Y\" clause."
+      }
+    },
+    "aphorism": {
+      "fix": "replace the general truth with the fact in this case",
+      "version": 1,
+      "min": 0.8,
+      "type": "noul",
       "instructions": "The sentence in `sentence` is a maxim: a short general truth in a polished, quotable form, which is not about one named thing.",
-      "criteria": { "true": "It states a general law about tests, code, people, or work, in a form made to be quoted.", "false": "It states a fact about one named file, function, number, or event, or gives an instruction." } },
-    "perform_candour": { "version": 1, "min": 0.8, "type": "noul",
+      "criteria": {
+        "true": "It states a general law about tests, code, people, or work, in a form made to be quoted.",
+        "false": "It states a fact about one named file, function, number, or event, or gives an instruction."
+      }
+    },
+    "perform_candour": {
+      "fix": "cut the claim of honesty and give the content",
+      "version": 1,
+      "min": 0.8,
+      "type": "noul",
       "instructions": "The sentence in `sentence` claims candour, honesty, or directness for itself.",
-      "criteria": { "true": "It calls itself honest, frank, candid, clear, or blunt.", "false": "It makes no claim about its own honesty." } },
-    "meta_announce": { "version": 2, "min": 0.85, "type": "noul",
+      "criteria": {
+        "true": "It calls itself honest, frank, candid, clear, or blunt.",
+        "false": "It makes no claim about its own honesty."
+      }
+    },
+    "meta_announce": {
+      "fix": "cut the announcement and start with the content",
+      "version": 2,
+      "min": 0.85,
+      "type": "noul",
       "instructions": "The sentence in `sentence` announces what the writer is about to do or say, and does not do or say it.",
-      "criteria": { "true": "A promise to explain, to break something down, to walk through, or to take a look, with no content of its own.", "false": "It states the content directly. Or it points the reader to a named place, such as a section, a table, a file, or a finding." } },
-    "colon_reveal": { "version": 1, "min": 0.8, "type": "noul",
+      "criteria": {
+        "true": "A promise to explain, to break something down, to walk through, or to take a look, with no content of its own.",
+        "false": "It states the content directly. Or it points the reader to a named place, such as a section, a table, a file, or a finding."
+      }
+    },
+    "colon_reveal": {
+      "fix": "write one plain sentence with no staged pause",
+      "version": 1,
+      "min": 0.8,
+      "type": "noul",
       "instructions": "The sentence in `sentence` uses a short lead-in and then a pause, by a colon or a dash, to stage what follows as a reveal.",
-      "criteria": { "true": "A short setup such as \"the result\" or \"the catch\" comes first, then a pause, then the point.", "false": "A colon or dash that introduces a list, a quote, a definition, or code; or no such pause." } },
-    "affirmation": { "version": 1, "min": 0.8, "type": "noul",
+      "criteria": {
+        "true": "A short setup such as \"the result\" or \"the catch\" comes first, then a pause, then the point.",
+        "false": "A colon or dash that introduces a list, a quote, a definition, or code; or no such pause."
+      }
+    },
+    "affirmation": {
+      "fix": "cut it and start with the first fact",
+      "version": 1,
+      "min": 0.8,
+      "type": "noul",
       "instructions": "The text in `sentence` praises or affirms what the other person said, or announces agreement, before any substance.",
-      "criteria": { "true": "It is praise, thanks, agreement, or acknowledgement with no technical content.", "false": "It has technical content or is not addressed to a person." } }
+      "criteria": {
+        "true": "It is praise, thanks, agreement, or acknowledgement with no technical content.",
+        "false": "It has technical content or is not addressed to a person."
+      }
+    }
   }
 }

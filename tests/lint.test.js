@@ -21,6 +21,9 @@ test('with the judge: a confirmed pattern is a finding with its score, and the h
   const r = await lint('The soak carries the oracle.', { rules, jev: true, key: 'K', fetch: fake([]), cacheFile: path.join(tmpdir(), 'c.json') });
   assert.equal(r.jev, 'ran');
   assert.deepEqual(r.findings.map(f => [f.rule, f.kind, f.score]), [['thing_acts', 'judge', 0.9]]);
+  assert.equal(r.findings[0].note, rules.questions.thing_acts.fix, 'a judge finding says how to fix it');
+  assert.ok(rules.questions.thing_acts.fix.length > 10);
+  for (const [id, q] of Object.entries(rules.questions)) assert.ok(q.fix, id + ' has no fix text');
 });
 
 test('with the judge: a hint the judge rejects is dropped', async () => {

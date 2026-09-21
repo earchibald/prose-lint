@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('fs'); const os = require('os'); const path = require('path');
 const { judge } = require('../lib/jev');
 
-const QS = { thing_acts: { version: 1, min: 0.7, type: 'noul', instructions: 'i', criteria: { true: 't', false: 'f' } },
+const QS = { thing_acts: { version: 1, min: 0.7, fix: 'say what it is', type: 'noul', instructions: 'i', criteria: { true: 't', false: 'f' } },
   aphorism: { version: 1, min: 0.8, type: 'noul', instructions: 'i2' } };
 // The network edge, faked. It scores a sentence 0.9 when it holds the word "carries", and records every call.
 function fakeFetch(calls, status = 200) {
@@ -23,6 +23,7 @@ test('one request for each sentence, with every question, and the key in the hea
   assert.deepEqual(Object.keys(calls[0].body.questions).sort(), ['aphorism', 'thing_acts']);
   assert.equal(calls[0].body.questions.thing_acts.version, undefined, 'our own fields do not go to the service');
   assert.equal(calls[0].body.questions.thing_acts.min, undefined);
+  assert.equal(calls[0].body.questions.thing_acts.fix, undefined);
   assert.equal(r.scores['The soak carries the oracle.'].thing_acts, 0.9);
   assert.equal(r.scores['Run the soak.'].thing_acts, 0.1);
   assert.equal(r.tokens, 200);
