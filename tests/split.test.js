@@ -43,3 +43,8 @@ test('a long sentence splits into clauses, and a short one does not', () => {
 test('a one-word or two-word sentence is kept, because an opening affirmation is that short', () => {
   assert.deepEqual(sentences('Good. Noted, both. The run passed on every seed.').map(x => x.text), ['Good.', 'Noted, both.', 'The run passed on every seed.']);
 });
+
+test('the target of a Markdown link is not prose, and its text is', () => {
+  const s = sentences('- [Read skip lines](a-skip-is-output-nobody-reads.md) and then see https://example.com/a-guard-is-a-lie for more words.');
+  assert.deepEqual(s.map(x => x.text), ['Read skip lines and then see for more words.']);
+});
