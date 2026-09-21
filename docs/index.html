@@ -158,8 +158,7 @@
     <tbody>
       <tr><td>Claude Code</td><td>The plugin runs inside it.</td></tr>
       <tr><td>Node 22 or newer, as <code>node</code> on your path</td><td>The hooks and the server are JavaScript. They use no outside packages.</td></tr>
-      <tr><td>Read access to <code>github.com/earchibald/prose-lint</code></td><td>Claude Code clones the plugin from this repo. The repo is private at this time.</td></tr>
-      <tr><td>A key from TypeSafe, the company that runs the judge, if you want the judge</td><td>Without a key, the plugin still finds banned phrases, em dashes, and long sentences.</td></tr>
+            <tr><td>A key from TypeSafe, the company that runs the judge, if you want the judge</td><td>Without a key, the plugin still finds banned phrases, em dashes, and long sentences.</td></tr>
     </tbody>
   </table></div>
   <p>The first version was a set of hooks that you added to a settings file by hand. That install is retired. Use the plugin.</p>
@@ -670,7 +669,7 @@ claude plugin update prose-lint@earchibald-plugins
       <tr><td><strong>A small model could not call the server's tools.</strong> Haiku found the tools and then said that it could not use them. Sonnet called all three with no trouble.</td><td><span class="pill open">open</span> The hooks do not use the server.</td></tr>
       <tr><td><strong>The server was reported as not connected</strong> at the start of one session on 21 September. Later in the same session, <code>status</code> answered. By hand, the server starts and lists its tools.</td><td><span class="pill open">open</span> Cause not known.</td></tr>
       <tr><td><strong>The copy in the cache holds more than it needs.</strong> Claude Code copies the whole repo, with the tests and <code>docs/</code>. The cache copy of 0.2.3 is 348 KB.</td><td><span class="pill open">open</span> A later version can move the plugin into a subfolder of the repo.</td></tr>
-      <tr><td><strong>The plugin's repo on GitHub is private.</strong> The marketplace list is public. Only an account with access to the repo can install the plugin.</td><td><span class="pill open">open</span> To make it public: <code>gh repo edit earchibald/prose-lint --visibility public --accept-visibility-change-consequences</code></td></tr>
+      <tr><td><strong>The plugin's repo on GitHub was private.</strong> Only an account with access to the repo could install the plugin.</td><td><span class="pill built">built</span> The repo became public on 20 September. Anyone can install the plugin.</td></tr>
       <tr><td><strong>The working folder was in Workshop.</strong></td><td>The primary clone is now <code>~/Code/prose-lint</code>. The old folder, <code>~/Workshop/001-prose-lint</code>, is still on disk at the same commit.</td></tr>
     </tbody>
   </table></div>
@@ -701,7 +700,7 @@ claude plugin update prose-lint@earchibald-plugins
   <div class="scroll"><table>
     <thead><tr><th>Source</th><th>What it is</th></tr></thead>
     <tbody>
-      <tr><td><a href="https://github.com/earchibald/prose-lint">github.com/earchibald/prose-lint</a></td><td>The plugin's repo. It is private at this time.</td></tr>
+      <tr><td><a href="https://github.com/earchibald/prose-lint">github.com/earchibald/prose-lint</a></td><td>The plugin's repo</td></tr>
       <tr><td><a href="https://github.com/earchibald/claude-marketplace">github.com/earchibald/claude-marketplace</a></td><td>The marketplace list that names the plugin</td></tr>
       <tr><td><a href="https://docs.typesafe.ai">docs.typesafe.ai</a></td><td>The TypeSafe documentation, with the Jev model and its scores</td></tr>
       <tr><td><a href="https://github.com/bnaylor/llm-cliche-hall-of-shame">github.com/bnaylor/llm-cliche-hall-of-shame</a></td><td>A public list of overused AI phrases, under the MIT licence. Some banned phrases came from it.</td></tr>
