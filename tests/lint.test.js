@@ -67,3 +67,11 @@ test('a banned phrase in a heading or a table cell is a hit, though neither is j
   assert.deepEqual(r.findings.map(f => [f.line, f.rule, f.match]), [[1, 'phrase', 'a real gap'], [5, 'phrase', 'load-bearing']]);
   assert.equal(calls.length, 0, 'no heading and no cell goes to the judge');
 });
+
+test('JSON output over 64 KB reaches a pipe whole', () => {
+  const big = Array.from({ length: 900 }, (_, i) => `Sentence number ${i} of this long report is load-bearing for the merge.`).join('\n\n');
+  const r = spawnSync(process.execPath, [BIN, '--no-jev', '--json'], { input: big, encoding: 'utf8', maxBuffer: 1 << 26 });
+  assert.ok(r.stdout.length > 70000, 'the output is only ' + r.stdout.length + ' bytes, so this test does not reach the limit');
+  assert.equal(JSON.parse(r.stdout).files[0].findings.filter(f => f.rule === 'phrase').length, 900);
+  assert.equal(r.status, 1);
+});

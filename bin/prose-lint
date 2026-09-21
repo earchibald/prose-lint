@@ -37,5 +37,6 @@ function keyFromFiles() { // The environment first, then the user's config file,
     }
     console.log(`${total} finding${total === 1 ? '' : 's'}. judge: ${out.jev}${out.tokens ? `, ${out.tokens} tokens, $${(out.tokens * 42e-9).toFixed(5)}` : ''}`);
   }
-  process.exit(total ? 1 : 0);
+  /* Set the code and let the process end by itself. `process.exit()` cuts off a write to a pipe at 64 KB. */
+  process.exitCode = total ? 1 : 0;
 })().catch(e => { console.error('prose-lint: ' + (e.message || e)); process.exit(2); });
