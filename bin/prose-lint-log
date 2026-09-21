@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+// prose-lint-log [--since 2026-09-20] [logfile]   A summary of what the Stop hook has logged.
+const fs = require('fs'); const path = require('path'); const os = require('os');
+const { summarise } = require('../lib/summary');
+const args = process.argv.slice(2); let since = ''; const i = args.indexOf('--since'); if (i >= 0) since = args.splice(i, 2)[1];
+const file = args[0] || path.join(os.homedir(), '.claude', 'prose-lint', 'chat.jsonl');
+const rows = fs.readFileSync(file, 'utf8').split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return { error: 'bad line' }; } }).filter(r => !since || (r.ts || '') >= since);
+const s = summarise(rows);
+console.log(`${s.replies} replies, ${s.sentences} sentences. ${s.repliesWithFindings} replies had a finding. ${s.errors} hook errors.`);
+for (const r of s.rules) { console.log(`\n${r.rule}: ${r.count}, or ${r.per100} for each 100 sentences`); for (const e of r.examples) console.log('    ' + e.slice(0, 160)); }

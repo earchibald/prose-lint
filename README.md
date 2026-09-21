@@ -24,6 +24,14 @@ The key is read from `TYPESAFE_API_KEY`, then from `~/.config/prose-lint/env`, t
 
 Judge answers are kept in `~/.cache/prose-lint/jev.json`. A second run over the same text sends nothing. When you change a question, raise its `version`, and the old answers for that question are asked again.
 
+## The Stop hook
+
+`hooks/stop-log.js` is a Claude Code Stop hook. It lints each reply as it ends and appends one line to `~/.claude/prose-lint/chat.jsonl`. It is log only. It prints nothing, it never blocks, and it always exits 0. A clean reply is logged too, so that a rate can be worked out.
+
+`~/.claude/settings.json` names this script by its full path. If this folder moves, change that path, because a hook that cannot start fails without a message.
+
+`prose-lint-log` prints a summary of the log. `prose-lint-log --since 2026-09-20` starts from a date.
+
 ## Rules
 
 `rules.json` holds every rule as data.
