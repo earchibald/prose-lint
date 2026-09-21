@@ -16,7 +16,7 @@ The key is a sensitive option named `api_key`. Claude Code keeps it in the syste
 
 Tell the user to do one of these:
 
-- In Claude Code, open `/plugin`, choose Prose Lint, and choose the option to configure it. Paste the key into the field "TypeSafe key for the judge".
+- In Claude Code, run `/plugin configure prose-lint@earchibald-tools`. Paste the key into the field "TypeSafe key for the judge".
 - Or, in a terminal: `claude plugin enable prose-lint@earchibald-tools --config api_key=THE_KEY`
 
 Then ask them to run `/reload-plugins`, and call `status` again. The `key` line must read "set, from the plugin option".
@@ -35,7 +35,7 @@ These are not secret. They are in `~/.claude/settings.json`, under `pluginConfig
 | `reply_log` | true, false | Record each chat reply in a log |
 | `session_report` | true, false | Give Claude four lines about its recent replies when a session starts |
 
-To change one, the user can open `/plugin` and configure Prose Lint. If they ask you to do it, read `~/.claude/settings.json`, change only that one value, and keep everything else. Then ask them to run `/reload-plugins`.
+To change one, the user can run `/plugin configure prose-lint@earchibald-tools`. If they ask you to do it, read `~/.claude/settings.json`, change only that one value, and keep everything else. Then ask them to run `/reload-plugins`.
 
 To turn everything off in one step: `/plugin disable prose-lint@earchibald-tools`.
 

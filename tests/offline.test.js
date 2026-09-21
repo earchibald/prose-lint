@@ -60,3 +60,10 @@ test('three short parallel items are a hint', () => {
 test('a plain sentence has no findings', () => {
   assert.deepEqual(ids('Run the soak after every change to the core.'), []);
 });
+
+test('a phrase that ends in a comma or another mark still matches', () => {
+  const r = { ...rules, phrases: [{ re: 'moving forward,', alt: 'cut it', example: 'Moving forward, we test.' }] };
+  assert.deepEqual(offline('Moving forward, we test more.', r).map(f => f.rule), ['phrase']);
+  assert.deepEqual(offline('The wolf is moving forward slowly.', r).map(f => f.rule), []);
+  assert.deepEqual(offline('We are unloading the cart.', { ...rules, phrases: [{ re: 'load', alt: 'x', example: 'load' }] }).filter(f => f.rule === 'phrase'), [], 'a phrase inside a longer word does not match');
+});

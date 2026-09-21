@@ -9,6 +9,17 @@
 | Hints | No | Three shapes that a program can see but cannot confirm: an agent verb, "an X is a Y", and a list of three. |
 | Judge | Yes | Pattern questions put to the Jev model, one request for each sentence. A judge answer replaces a hint. |
 
+## Install as a Claude Code plugin
+
+```
+claude plugin marketplace add ~/Workshop/001-prose-lint
+claude plugin install prose-lint@earchibald-tools --config api_key=YOUR_TYPESAFE_KEY
+```
+
+Claude Code keeps the key in the system keychain. The plugin brings the hooks, the style file, a small server, and five skills: `check`, `rules`, `report`, `setup`, and `plain-prose`. Run `/plugin configure prose-lint@earchibald-tools` to change an option.
+
+Your own rules go in `~/.claude/prose-lint/rules.local.json`. An update replaces the plugin folder, and it leaves that file alone. Ask Claude to "ban the phrase ..." and the `rules` skill tests the rule and saves it there.
+
 ## Use
 
 ```

@@ -32,7 +32,7 @@ const RUN = {
   async try_rule(a) {
     const ctx = context(); const yes = a.should_match || [], no = a.should_not_match || [];
     if (a.phrase) {
-      const re = new RegExp('\\b(?:' + a.phrase.re + ')\\b', 'i'); const t = s => ({ sentence: s, matched: re.test(s.replace(/`[^`]*`/g, ' ')) });
+      const re = new RegExp('(?<![A-Za-z])(?:' + a.phrase.re + ')(?![A-Za-z])', 'i'); const t = s => ({ sentence: s, matched: re.test(s.replace(/`[^`]*`/g, ' ')) });
       const out = { kind: 'phrase', should_match: yes.map(t), should_not_match: no.map(t) };
       return { ...out, ok: out.should_match.every(x => x.matched) && out.should_not_match.every(x => !x.matched) };
     }

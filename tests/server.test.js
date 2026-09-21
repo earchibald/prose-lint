@@ -48,6 +48,8 @@ test('try_rule runs a draft phrase against sentences that should match and sente
   assert.deepEqual(out.should_match.map(x => x.matched), [true]);
   assert.deepEqual(out.should_not_match.map(x => x.matched), [true, false], 'the draft is too broad, and the tool shows it');
   assert.equal(out.ok, false);
+  const n = await talk([init, call(2, 'try_rule', { phrase: { re: 'moving forward,', alt: 'cut it' }, should_match: ['Moving forward, we test.'], should_not_match: ['The wolf is moving forward slowly.'] })]);
+  assert.equal(JSON.parse(textOf(n[2])).ok, true, 'the narrower draft, with its comma, passes');
 });
 
 test('status says whether a key is there without showing it, and names the folders and the rule counts', async () => {
