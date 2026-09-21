@@ -48,3 +48,8 @@ test('the target of a Markdown link is not prose, and its text is', () => {
   const s = sentences('- [Read skip lines](a-skip-is-output-nobody-reads.md) and then see https://example.com/a-guard-is-a-lie for more words.');
   assert.deepEqual(s.map(x => x.text), ['Read skip lines and then see for more words.']);
 });
+
+test('a lowercase file name can start a sentence, and a plain lowercase word cannot', () => {
+  const s = sentences('The hook reads the body made with gh. lib/message.js finds that text. It reads a list, e.g. this one stays whole.');
+  assert.deepEqual(s.map(x => x.text), ['The hook reads the body made with gh.', 'lib/message.js finds that text.', 'It reads a list, e.g. this one stays whole.']);
+});

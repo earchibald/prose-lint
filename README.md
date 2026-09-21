@@ -34,7 +34,7 @@ Judge answers are kept in `~/.cache/prose-lint/jev.json`. A second run over the 
 
 ## The write hook
 
-`hooks/write-feedback.js` is a Claude Code PostToolUse hook for Write, Edit, and MultiEdit. It lints the new text of a prose file. If it finds a banned phrase, a counted fault, or a pattern that the judge confirms, it sends the findings back to the session that wrote the text. Each finding names the file, the line, the rule, and a way to fix the sentence.
+`hooks/write-feedback.js` is a Claude Code PostToolUse hook for Write, Edit, and MultiEdit. It lints the new text of a prose file. It looks for a banned phrase, a counted fault, or a pattern that the judge confirms. It sends each finding back to the session that wrote the text. Each finding names the file, the line, the rule, and a way to fix the sentence.
 
 The hook is silent for clean text, and it never fails the tool call. It does not send hints, because only the judge can confirm one. Every write is logged to `~/.claude/prose-lint/writes.jsonl`, hints included.
 
@@ -44,6 +44,14 @@ The `hook` section of `rules.json` controls the hook:
 - `ignore`: a path that holds one of these strings is skipped. Approved game text is in this list, because it is used word for word.
 - `ruleIgnore`: a rule that is off for some paths. The memory index keeps its em dash.
 - `maxFindings`: the session gets this many findings, and a count of the others.
+
+## The commit hook
+
+`hooks/commit-check.js` is a Claude Code PreToolUse hook for Bash. It reads the prose that a command writes for other people. That prose is a commit message, or the title and body of a pull request, an issue, or a comment made with `gh`. It finds the text in `-m`, in a heredoc, and in a message file. It leaves out the attribution lines.
+
+If the text has a banned phrase, a counted fault, or a pattern that the judge confirms, the hook denies the command once. The session gets each flagged sentence and a way to fix it. If the session sends the same text a second time, the hook passes it and logs it as kept. A session needs this when a flagged sentence is a quotation or approved text. The hook does not deny a command for a hint.
+
+Any other command is passed without a word. On a fault of its own the hook exits 0 and prints nothing, so it cannot block a command by accident. Every checked message is logged to `~/.claude/prose-lint/commits.jsonl` with its decision: allow, deny, or kept.
 
 ## Rules
 
